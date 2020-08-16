@@ -1,18 +1,16 @@
-#!/usr/bin/env python
-# /Users/dimitrisdimitriadis/SourceTree/Android_ios_Mobility/MobilityCommonLib/build/xcode-frameworks
+#!/usr/bin/env python3
 import shutil
 import os
 import sys
 
 # Function: Checks if user added path of molude he wants to delete. And if he wasn't add one wait to write it
 def checkIfLogFileIsEmpty(pathOfModule):
-    print(pathOfModule)
-    while len(pathOfModule) == 0 :
-        print("log.txt is empty. Please add a valid path in there\n")
-        pathOfModule = input("Path for module: ")
     
-    print("ok")
-    # return pathOfModule
+    while len(pathOfModule) == 0 :
+        print("File 'log.txt' is empty. Please add a valid path in there\n")
+        pathOfModule = input()
+    
+    return pathOfModule
 
 print("\n\n")
 
@@ -23,10 +21,12 @@ pathOfScript = os.path.dirname(os.path.abspath(__file__))
 f = open("%s/log.txt" %pathOfScript, "r+")
 
 # Read the text from log.txt
-pathOfModule = f.read()
+textPath = f.read()
 
-# checkIfLogFileIsEmpty(pathOfModule)
-f.write(pathOfModule)
+pathOfModule = checkIfLogFileIsEmpty(textPath)
+
+f.write(str(pathOfModule))
+f.close
 
 if len(pathOfModule) > 0 :
     # Check if file exists on path
@@ -44,5 +44,3 @@ if len(pathOfModule) > 0 :
 
 # Just simple spaces to make messages more clearly
 print("\n\n")
-
-f.close
