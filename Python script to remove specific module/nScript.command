@@ -25,7 +25,10 @@ textPath = f.read()
 
 pathOfModule = checkIfLogFileIsEmpty(textPath)
 
-f.write(str(pathOfModule))
+# Check for path existance to not append every time 
+if textPath != pathOfModule {
+    f.write(str(pathOfModule))
+}
 f.close
 
 if len(pathOfModule) > 0 :
