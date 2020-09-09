@@ -1,1 +1,1 @@
-/Users/dimitrisdimitriadis/SourceTree/Android_ios_Mobility/MobilityCommonLib/build/xcode-frameworks/Users/dimitrisdimitriadis/SourceTree/Android_ios_Mobility/MobilityCommonLib/build/xcode-frameworks
+/Users/dimitrisdimitriadis/SourceTree/Android_ios_Mobility/MobilityCommonLib/build/xcode-frameworks
