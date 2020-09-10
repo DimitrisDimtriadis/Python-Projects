@@ -6,6 +6,9 @@ import os
 
 filepath = 'data.csv'
 rowHeaders = ['Email', 'password', 'SourceMail']
+currentPath = os.path.dirname(__file__)
+parrentOfCurrentPath = os.path.dirname(currentPath)
+dirNameWithWatchdogs = "site_watchdog"
 
 
 def isGivenEmailValid(givenEmail):
@@ -38,18 +41,29 @@ def insertEntry(mEmail, mPass, mSource):
                               columns=rowHeaders)
     mEntry.to_csv(filepath, mode='a', header=False, index=False)
 
+
 def checkIfNeedToInitDataFile():
-    # Function to avoid script crashing for missing csv file 
+    # Function to avoid script crashing for missing csv file
     # Check if file exists
     if not os.path.isfile("./"+filepath):
-        with open('./'+filepath, 'w'): pass
-        pandas.DataFrame(columns=rowHeaders).to_csv(filepath, mode = 'a', header = True, index = False)
+        with open('./'+filepath, 'w'):
+            pass
+        pandas.DataFrame(columns=rowHeaders).to_csv(
+            filepath, mode='a', header=True, index=False)
 
 
-        
+def checkIfMessageToSendExist():
+    # Function to check if file exist and return the path of txt file with message for sending via email
+    if os.path.isfile(currentPath + "/message.txt"):
+        return currentPath + "/message.txt"
+    elif os.path.isfile(parrentOfCurrentPath + "/" + dirNameWithWatchdogs + "/message.txt"):
+        return parrentOfCurrentPath + "/" + dirNameWithWatchdogs + "/message.txt"
+    else:
+        return ""
+
 
 if __name__ == "__main__":
-    
+
     checkIfNeedToInitDataFile()
 
     # Read csv file
@@ -128,38 +142,39 @@ if __name__ == "__main__":
             else:
                 print("The given email is invalid. Please try again")
 
+    if checkIfMessageToSendExist() != "":
+
+        # Set port and email source and email host # For SSL
+        port = 465
+        # Email host of source email
+        host = "smtp.gmail.com"
+
+        # Title of message to send on email
+        emailSubject = "Test subject"
+        # Message to send on email
+        msgText = "Hello world"
+        # Compination of Title and message of email
+        message = 'Subject: {}\n\n{}'.format(emailSubject, msgText)
+
+        # Start procedure of sending email
+        server = smtplib.SMTP_SSL(host, port)
+        server.login(emailSource[0], passwordSource[0])
+
+        # Get again the emails to send the message
+        reciptentTosSendMsgs = []
+        for receiverMail in df.loc[df['SourceMail'] == 0]['Email']:
+            reciptentTosSendMsgs.append(receiverMail)
+
+        input("Press before send email $$$: ")
+        # For multiple emails
+        server.sendmail(emailSource[0], reciptentTosSendMsgs, message)
+        server.quit()
+
+        print("Ok. All email(s) has been send")
+
     else:
-        # Set list with reciptents to send them the message
-        reciptentTosSendMsgs = reciptentTosSendMsgs["Email"]
-
-    # Set port and email source and email host # For SSL
-    port = 465
-
-    # Email host of source email
-    host = "smtp.gmail.com"
-
-    receiverEmail = "dimitris.dimtriadis@gmail.com"
-
-    input("Press any key to continue: $$$$ ")
-    # Title of message to send on email
-    emailSubject = "Test subject"
-    # Message to send on email
-    msgText = "Hello world"
-    # Compination of Title and message of email
-    message = 'Subject: {}\n\n{}'.format(emailSubject, msgText)
-
-    # Need add loop if
-
-    # Start procedure of sending email
-    server = smtplib.SMTP_SSL(host, port)
-    server.login(emailSource, passwordSource)
-
-    # For multiple emails
-    # recipients = ['john.doe@example.com', 'john.smith@example.co.uk']
-    server.sendmail(emailSource, receiverEmail, message)
-    server.quit()
-
-    print("Ok. All email(s) has been send")
+        print("\nIt seems that there is no message.txt file in current path or in: " +
+              parrentOfCurrentPath+". As result the email script abort the try of sending any message")
 
  # Read text file as message
- # Upload it on github
+ # Check if text file exist on this dir or to another
