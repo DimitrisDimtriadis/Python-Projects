@@ -5,7 +5,7 @@ import pandas
 import os
 
 filepath = 'data.csv'
-rowHeaders = ['Email', 'password', 'SourceMail']
+rowHeaders = ['Email', 'password', 'SourceMail', 'host']
 currentPath = os.path.dirname(__file__)
 parrentOfCurrentPath = os.path.dirname(currentPath)
 dirNameWithWatchdogs = "site_watchdog"
@@ -35,9 +35,9 @@ def deleteRows(rowsToDelete):
     df.drop(rowsToDelete.index).to_csv(filepath, index=False)
 
 
-def insertEntry(mEmail, mPass, mSource):
+def insertEntry(mEmail, mPass, mSource, mHost):
     # Function to write entry on csv file
-    mEntry = pandas.DataFrame([[mEmail, mPass, mSource]],
+    mEntry = pandas.DataFrame([[mEmail, mPass, mSource, mHost]],
                               columns=rowHeaders)
     mEntry.to_csv(filepath, mode='a', header=False, index=False)
 
@@ -54,9 +54,12 @@ def checkIfNeedToInitDataFile():
 
 def checkIfMessageToSendExist():
     # Function to check if file exist and return the path of txt file with message for sending via email
-    if os.path.isfile(currentPath + "/message.txt"):
+
+    # Check if file exist on current path and it is not empty
+    if os.path.isfile(currentPath + "/message.txt") and os.stat(currentPath + "/message.txt").st_size != 0:
         return currentPath + "/message.txt"
-    elif os.path.isfile(parrentOfCurrentPath + "/" + dirNameWithWatchdogs + "/message.txt"):
+    # Check if file exist on watchdog dir path and it is not empty
+    elif os.path.isfile(parrentOfCurrentPath + "/" + dirNameWithWatchdogs + "/message.txt") and os.stat(parrentOfCurrentPath + "/" + dirNameWithWatchdogs + "/message.txt").st_size != 0:
         return parrentOfCurrentPath + "/" + dirNameWithWatchdogs + "/message.txt"
     else:
         return ""
@@ -69,10 +72,19 @@ if __name__ == "__main__":
     # Read csv file
     df = pandas.read_csv(filepath)
 
+    # Global values
     # Address of the source email
     emailSource = ""
     # Password of the source email
     passwordSource = ""
+    # Email host of source email
+    host = ""
+    # Title of message to send on email
+    emailSubject = ""
+    # Message to send on email
+    msgText = ""
+    # Set port and email source and email host # For SSL
+    port = 465
 
     # Check if source mail has beeen set
     # SourceMail = 1 mean that its not for sending but as source
@@ -111,19 +123,30 @@ if __name__ == "__main__":
                 # To avoid ending of loop
                 continue
 
+            host = input(
+                "You need to add also the host of this email: ")
+
+            if host == "":
+                print("\nYou must add a host to be able to send emails ")
+                # To avoid ending without host
+                continue
+
             isSourceMailInvalid = False
             # To insert source email on csv
-            insertEntry(emailSource, passwordSource, 1)
+            insertEntry(emailSource, passwordSource, 1, host)
 
     else:
-        emailSource = mSourceMail["Email"]
-        passwordSource = mSourceMail["password"]
+        emailSource = mSourceMail["Email"][0]
+        passwordSource = mSourceMail["password"][0]
+        host = mSourceMail["host"][0]
 
     # SourceMail = 0 means that this mail is a reciptent
     reciptentTosSendMsgs = df.loc[df['SourceMail'] == 0]
 
     if len(reciptentTosSendMsgs) == 0:
-
+        
+        reciptentTosSendMsgs = []
+        
         print("\n\nIt seems that you haven't set reciptents.\n")
 
         # Loop to add a or multiple destination emails
@@ -136,45 +159,58 @@ if __name__ == "__main__":
             # Check if mail is valid
             if isGivenEmailValid(emailToSend):
                 # Add it on csv
-                insertEntry(emailToSend, 0, 0)
+                insertEntry(emailToSend, 0, 0, "")
+                reciptentTosSendMsgs.append(emailToSend)
                 resultOfAddAnotherEmail = input(
                     "Do you need to add another one ? (Y/N) : ")
             else:
                 print("The given email is invalid. Please try again")
-
-    if checkIfMessageToSendExist() != "":
-
-        # Set port and email source and email host # For SSL
-        port = 465
-        # Email host of source email
-        host = "smtp.gmail.com"
-
-        # Title of message to send on email
-        emailSubject = "Test subject"
-        # Message to send on email
-        msgText = "Hello world"
-        # Compination of Title and message of email
-        message = 'Subject: {}\n\n{}'.format(emailSubject, msgText)
-
-        # Start procedure of sending email
-        server = smtplib.SMTP_SSL(host, port)
-        server.login(emailSource[0], passwordSource[0])
-
+    else:
         # Get again the emails to send the message
         reciptentTosSendMsgs = []
         for receiverMail in df.loc[df['SourceMail'] == 0]['Email']:
             reciptentTosSendMsgs.append(receiverMail)
 
-        input("Press before send email $$$: ")
+    # Save path of message.txt (if exist) to set the title and the message of email
+    pathOfMessageFile = checkIfMessageToSendExist()
+
+    if pathOfMessageFile != "":
+
+        # Open the file with message
+        messageFile = open(pathOfMessageFile)
+
+        for position, line in enumerate(messageFile):
+            if position == 0:
+                emailSubject = line
+            else:
+                msgText += line
+
+        # Compination of Title and message of email
+        message = 'Subject: {}\n\n{}'.format(emailSubject, msgText)
+
+        # Start procedure of sending email
+        try:
+            server = smtplib.SMTP_SSL(host, port)
+        except smtplib.socket.gaierror:
+            print("\nSomething went wrong with SMTP_SSL (host or port) !\n")
+            server.quit()
+        
+        # Try to login on email with given crentetial
+        try:
+            server.login(emailSource, passwordSource)
+        except Exception:
+            print("\nSomething went wrong with given crendetials !\n")
+            deleteRows(df)
+            server.quit()
+        
         # For multiple emails
-        server.sendmail(emailSource[0], reciptentTosSendMsgs, message)
-        server.quit()
-
-        print("Ok. All email(s) has been send")
-
+        try: 
+            server.sendmail(emailSource, reciptentTosSendMsgs, message)
+            server.quit()
+            print("Ok. All email(s) has been send")
+        except Exception:
+            print("\nScript fail to send the message !\n")
+        
     else:
         print("\nIt seems that there is no message.txt file in current path or in: " +
               parrentOfCurrentPath+". As result the email script abort the try of sending any message")
-
- # Read text file as message
- # Check if text file exist on this dir or to another
