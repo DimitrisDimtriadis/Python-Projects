@@ -8,7 +8,7 @@ filepath = 'data.csv'
 rowHeaders = ['Email', 'password', 'SourceMail', 'host']
 currentPath = os.path.dirname(__file__)
 parrentOfCurrentPath = os.path.dirname(currentPath)
-dirNameWithWatchdogs = "site_watchdog"
+dirNameWithWatchdogs = "Site_Watchdog"
 
 
 def isGivenEmailValid(givenEmail):
