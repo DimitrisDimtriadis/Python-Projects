@@ -57,10 +57,7 @@ def checkIfMessageToSendExist():
 
     # Check if file exist on current path and it is not empty
     if os.path.isfile(currentPath + "/message.txt") and os.stat(currentPath + "/message.txt").st_size != 0:
-        return currentPath + "/message.txt"
-    # Check if file exist on watchdog dir path and it is not empty
-    elif os.path.isfile(parrentOfCurrentPath + "/" + dirNameWithWatchdogs + "/message.txt") and os.stat(parrentOfCurrentPath + "/" + dirNameWithWatchdogs + "/message.txt").st_size != 0:
-        return parrentOfCurrentPath + "/" + dirNameWithWatchdogs + "/message.txt"
+        return currentPath + "/message.txt"    
     else:
         return ""
 
@@ -211,8 +208,7 @@ def main():
             print("\nScript fail to send the message !\n")
         
     else:
-        print("\nIt seems that there is no message.txt file in current path or in: " +
-              parrentOfCurrentPath+". As result the email script abort the try of sending any message")
+        print("\nIt seems that there is no message.txt file in current path. \nAs result the email script abort the try of sending any message!!\n\n")
 
 if __name__ == "__main__":
     main()
