@@ -4,11 +4,11 @@ import smtplib
 import pandas
 import os
 
-filepath = 'data.csv'
 rowHeaders = ['Email', 'password', 'SourceMail', 'host']
 currentPath = os.path.dirname(__file__)
 parrentOfCurrentPath = os.path.dirname(currentPath)
 dirNameWithWatchdogs = "Site_Watchdog"
+filepath = currentPath + '/data.csv'
 
 
 def isGivenEmailValid(givenEmail):
@@ -45,8 +45,8 @@ def insertEntry(mEmail, mPass, mSource, mHost):
 def checkIfNeedToInitDataFile():
     # Function to avoid script crashing for missing csv file
     # Check if file exists
-    if not os.path.isfile("./"+filepath):
-        with open('./'+filepath, 'w'):
+    if not os.path.isfile(filepath):
+        with open(filepath, 'w'):
             pass
         pandas.DataFrame(columns=rowHeaders).to_csv(
             filepath, mode='a', header=True, index=False)
@@ -89,7 +89,7 @@ def main():
     if len(mSourceMail) != 1:
 
         # If mSource contains more than 1 source mail. Then delete all source mails to set a new one
-        deleteRows(df, mSourceMail)
+        # deleteRows(df, mSourceMail)
 
         print("\n\nIt seems that you haven't set an email as source to send emails:\n")
 
