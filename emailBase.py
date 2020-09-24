@@ -5,10 +5,7 @@ import pandas
 import os
 
 rowHeaders = ['Email', 'password', 'SourceMail', 'host']
-currentPath = os.path.dirname(__file__)
-parrentOfCurrentPath = os.path.dirname(currentPath)
-dirNameWithWatchdogs = "Site_Watchdog"
-filepath = currentPath + '/data.csv'
+filepath = './data.csv'
 
 
 def isGivenEmailValid(givenEmail):
@@ -56,8 +53,8 @@ def checkIfMessageToSendExist():
     # Function to check if file exist and return the path of txt file with message for sending via email
 
     # Check if file exist on current path and it is not empty
-    if os.path.isfile(currentPath + "/message.txt") and os.stat(currentPath + "/message.txt").st_size != 0:
-        return currentPath + "/message.txt"    
+    if os.path.isfile("./message.txt") and os.stat("./message.txt").st_size != 0:
+        return "./message.txt"    
     else:
         return ""
 
