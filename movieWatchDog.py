@@ -9,7 +9,7 @@ def checkGradeValidation(mGrade):
         return mGrade[:templocation]
 
     return mGrade
-
+ 
 def createInfoMsgToSend(elementList):
 
     # Create (If doesn't exist) message.txt or clean it to create a new message
