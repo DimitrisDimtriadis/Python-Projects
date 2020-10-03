@@ -1,6 +1,8 @@
 import requests
 import json
 import os
+import sys
+import time
 
 # Path to save apks files
 PATH_FOR_APKS = 'apks'
@@ -8,12 +10,14 @@ PATH_FOR_APKS = 'apks'
 # Main methon for current file
 if __name__ == "__main__":
 
+    print("Start looking for apks to download...")
+
     # Direct link to download link for apks
     mURL = 'https://circleci.com/api/v1.1/project/github/IQTaxi/android_driver/latest/artifacts'
     payload = {'key': 'val'}
     
     # Add authentication token
-    headers = {'Circle-Token': ''}
+    headers = {'Circle-Token': '### ADD AUTH TOKEN HERE ###'}
     
     # Get the result from url
     res = requests.get(mURL, data=payload, headers=headers)
@@ -40,15 +44,16 @@ if __name__ == "__main__":
         os.makedirs(PATH_FOR_APKS)
     
     # Loop to download all the flavors
-    # for mUrl in apkUrls:
-    
-    mUrlSubStr = apkUrls[0].split('/')
-    
-    # Download the apk
-    downloaded_file = requests.get(apkUrls[0], data=payload, headers=headers)
+    for mUrl in apkUrls:
         
-    # Save it with specific name
-    open(PATH_FOR_APKS + '\\'+ mUrlSubStr[-1], 'wb+').write(downloaded_file.content)
+        mUrlSubStr = mUrl.split('/')
+        
+        print("\nDownloading " + mUrlSubStr[-1] + " ...")
+        # Download the apk
+        downloaded_file = requests.get(mUrl, data=payload, headers=headers)
+        
+        # Save it with specific name
+        open(PATH_FOR_APKS + '\\'+ mUrlSubStr[-1], 'wb+').write(downloaded_file.content)
+        print("DONE")
 
-    print("assssd")
- 
+    print("Proccess... end")

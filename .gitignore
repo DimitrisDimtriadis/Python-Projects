@@ -1,3 +1,6 @@
 *.csv
 message.txt
 *.db
+env/
+.vscode/
+*.pyc
