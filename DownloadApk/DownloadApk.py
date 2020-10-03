@@ -17,7 +17,7 @@ if __name__ == "__main__":
     payload = {'key': 'val'}
     
     # Add authentication token
-    headers = {'Circle-Token': '### ADD AUTH TOKEN HERE ###'}
+    headers = {'Circle-Token': ''}
     
     # Get the result from url
     res = requests.get(mURL, data=payload, headers=headers)
