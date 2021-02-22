@@ -22,7 +22,7 @@ def programsPerBU():
         uniformtext_minsize=8, 
         uniformtext_mode='hide', 
         plot_bgcolor='rgba(0,0,0,0)',
-        height=300,
+        height=250,
         width=300,
         margin=dict(
             t=0
@@ -106,8 +106,8 @@ def mainGraph(mDf ,mainRowForGraph):
         uniformtext_mode='hide', 
         plot_bgcolor='rgba(0,0,0,0)',
         xaxis=dict(range=[0,2000000]),
-        width=600,
-        height=300,
+        width=500,
+        height=250,
          margin=dict(
             t=0
         ))  
@@ -119,18 +119,22 @@ app = dash.Dash(__name__)
 df = pd.read_csv("TestData.csv")
 
 app.layout = html.Div([
+
+    html.Div([    
+        html.Div([html.H3("Programs per BU", style={'text-align': 'center'}),
+        dcc.Graph(id="my_bee_map0", figure=programsPerBU())], style={'width':'300px', 'heigh':'250px'}),
     
-    html.Div([html.H3("Programs per BU", style={'text-align': 'center'}),
-    dcc.Graph(id="my_bee_map0", figure=programsPerBU())], style={'width':'600px', 'heigh':'300px'}),
+        html.Div([
+            html.Div([html.H3("Dollars per Business Unit", style={'text-align': 'center'}),
+            dcc.Graph(id="my_bee_map1", figure=dollarPerBusinessUnit())], style={'width':'500px', 'heigh':'250px'}),
 
-    html.Div([html.H3("Dollars per Business Unit", style={'text-align': 'center'}),
-    dcc.Graph(id="my_bee_map1", figure=dollarPerBusinessUnit())], style={'width':'600px', 'heigh':'300px'}),
+            html.Div([html.H3("Dollars per Country", style={'text-align': 'center'}),
+            dcc.Graph(id="my_bee_map2", figure=dollarPerCountry())], style={'width':'500px', 'heigh':'250px'}),
 
-    html.Div([html.H3("Dollars per Country", style={'text-align': 'center'}),
-    dcc.Graph(id="my_bee_map2", figure=dollarPerCountry())], style={'width':'600px', 'heigh':'300px'}),
-
-    html.Div([html.H3("Dollars by SDOH", style={'text-align': 'center'}),
-    dcc.Graph(id="my_bee_map3", figure=dollarsBySDOH())], style={'width':'600px', 'heigh':'300px'}),
+            html.Div([html.H3("Dollars by SDOH", style={'text-align': 'center'}),
+            dcc.Graph(id="my_bee_map3", figure=dollarsBySDOH())], style={'width':'500px', 'heigh':'250px'})
+        ], style={'display':'flex'}),
+    ], style={'display':'flex'}),
 
     html.Div([html.H3("SDOH Domain", style={'text-align': 'center'}),
     dcc.Graph(id="my_bee_map4", figure=SDOHDomain())]),
