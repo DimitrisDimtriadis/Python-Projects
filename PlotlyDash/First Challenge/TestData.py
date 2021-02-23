@@ -16,6 +16,10 @@ def programsPerBU():
         x="Business Unit",
         text="Business Unit",
         orientation="h",
+        color=dff.index,
+        labels={
+            "index":"<b>Business Unit</b>"
+        }
     )
     fig.update_traces(texttemplate='%{text:.0f}', textposition='outside', showlegend=False)
     fig.update_layout(
@@ -23,10 +27,13 @@ def programsPerBU():
         uniformtext_mode='hide', 
         plot_bgcolor='rgba(0,0,0,0)',
         height=250,
-        width=300,
+        width=300,        
+        xaxis=dict(range=[3,3]),
         margin=dict(
             t=0
-        ))    
+        ))  
+
+    fig.update_layout(xaxis_visible=False, xaxis_showticklabels=False)  
 
     return fig
 
@@ -70,7 +77,10 @@ def SDOHDomain():
         text="Dollar Amount",
         color='Business Unit',
         orientation="h",
-        facet_col='SDOH Domain'        
+        facet_col='SDOH Domain' ,
+        labels={
+            "Business Unit":"<b>Business Unit</b>"
+        }       
     )
     fig.update_traces(texttemplate='%{text:$,.2f}', textposition='outside', showlegend=False) #Set view of values right of bars And if need to show Dialog on the right
     fig.update_layout(
@@ -82,7 +92,7 @@ def SDOHDomain():
             t=0
         ))
 
-    fig.update_xaxes(showline=True, linewidth=1, linecolor='gray')
+    fig.update_xaxes(showline=True, linewidth=1, linecolor='gray', tickformat=",.2r")
     fig.update_yaxes(showline=True, linewidth=1, linecolor='gray', categoryorder='array', categoryarray=['WRD', 'PBG-IM', 'Corporate Affairs', 'CBO'])
     fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[1]))
 
@@ -90,7 +100,7 @@ def SDOHDomain():
 
 def mainGraph(mDf ,mainRowForGraph):
 
-    print(mDf[:2])
+    print(mDf[:2])    
 
     fig = px.bar(
         data_frame=mDf,
@@ -98,7 +108,11 @@ def mainGraph(mDf ,mainRowForGraph):
         x="Dollar Amount",
         text="Dollar Amount",
         orientation="h",
-        color=mainRowForGraph
+        color=mainRowForGraph,
+        labels={
+            "Dollar Amount":"<b>Dollar Amount</b>",
+            mainRowForGraph: "<b>" + mainRowForGraph + "</b>"
+        }
     )
     fig.update_traces(texttemplate='%{text:$,.2f}', textposition='outside', showlegend=False) #Set view of values right of bars And if need to show Dialog on the right
     fig.update_layout(
@@ -108,7 +122,7 @@ def mainGraph(mDf ,mainRowForGraph):
         xaxis=dict(range=[0,2000000]),
         width=500,
         height=250,
-         margin=dict(
+        margin=dict(
             t=0
         ))  
 
