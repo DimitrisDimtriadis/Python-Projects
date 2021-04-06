@@ -1,5 +1,3 @@
-import ssl
-import csv
 import smtplib
 import pandas
 import os

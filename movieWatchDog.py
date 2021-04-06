@@ -1,7 +1,10 @@
-import os
+import CustomeModels as mModel
+import csvBase as CB
 import requests
 import emailBase
 from bs4 import BeautifulSoup as BF
+
+MoviesList = []
 
 def checkGradeValidation(mGrade):
     templocation = mGrade.lower().find("<")
@@ -15,6 +18,9 @@ def createInfoMsgToSend(elementList):
     # Create (If doesn't exist) message.txt or clean it to create a new message
     msgFile = open("message.txt", "w")
     msgFile.write("New movies : \n")
+    
+    # Reset list to avoid conflicts
+    MoviesList = []
 
     # Loop that add data on message.txt
     for anElementListM in elementList:
@@ -32,19 +38,31 @@ def createInfoMsgToSend(elementList):
         
         if locationOfGrade != -1:
             # Get only the grade
-            gradeOfMovie =  movieGradeAsHtml[locationOfGrade : locationOfGrade+9]
+            gradeOfMovie =  movieGradeAsHtml[locationOfGrade+6 : locationOfGrade+9]
             
             msgFile.write("* Name: " + nameOfMovie.text + " || " + checkGradeValidation(gradeOfMovie) + " || " + imageOfMovie + "\n" )
         else: 
             msgFile.write("* Name: " + nameOfMovie.text + " || " + imageOfMovie)
-
+       
+        mGrade = -99
+        try:
+            mGrade = float(gradeOfMovie)
+        except:
+            print("Something went wrong with convert string to float. Grade: "+gradeOfMovie)
+        if "Two of Us (Deux) (2019)" == nameOfMovie.text:
+            print("asd")
+        tempMovie = mModel.Movie(nameOfMovie.text, mGrade, imageOfMovie)
+        
+        #Append on global list the tempObject
+        MoviesList.append(tempMovie)
+        CB.main(MoviesList)
 
 
 def main():
     # main function
 
     # Set the url link
-    urlMovies = 'https://www.subs4free.info/'
+    urlMovies = 'https://www.subs4free.club/'
 
     # Set my-user-aget. If you dont know who is your 'User-aget', just google "my user agent" and it will show it first on result
     headers = {
@@ -54,14 +72,14 @@ def main():
     pageMovies = requests.get(urlMovies, headers=headers)
 
     # Convert page to lxml
-    soupMovies = BF(pageMovies.content, 'lxml')
+    soupMovies = BF(pageMovies.content, 'html.parser')
     
     # DIV attribute that contains info for every movie
     elementListMovies = soupMovies.findAll("div", {"class": "movies-info"})
 
     createInfoMsgToSend(elementListMovies)
 
-    emailBase.main()
+    # emailBase.main()
 
 if __name__ == "__main__":
     main()
