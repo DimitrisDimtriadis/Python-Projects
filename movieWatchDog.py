@@ -3,16 +3,16 @@ import csvBase as CB
 import requests
 import emailBase
 from bs4 import BeautifulSoup as BF
+import re
 
 MoviesList = []
 
-def checkGradeValidation(mGrade):
-    templocation = mGrade.lower().find("<")
-    if templocation != -1:
-        return mGrade[:templocation]
+def extractImdbGradeFromText(mText):
+    mGrade = re.search(r"(?<=imdb:).*?(?=<)", mText, flags=re.I | re.M)
+    if mGrade:
+        return float(mGrade[0])
+    return -1
 
-    return mGrade
- 
 def createInfoMsgToSend(elementList):
 
     # Create (If doesn't exist) message.txt or clean it to create a new message
@@ -36,13 +36,13 @@ def createInfoMsgToSend(elementList):
         # To check if grade exist 
         locationOfGrade = movieGradeAsHtml.lower().find("imdb")
         
-        if locationOfGrade != -1:
-            # Get only the grade
-            gradeOfMovie =  movieGradeAsHtml[locationOfGrade+6 : locationOfGrade+9]
-            
-            msgFile.write("* Name: " + nameOfMovie.text + " || " + checkGradeValidation(gradeOfMovie) + " || " + imageOfMovie + "\n" )
+        gradeOfMovie =  extractImdbGradeFromText(movieGradeAsHtml)
+        
+        if locationOfGrade != -1 or gradeOfMovie != -1:
+            # Get only the grade            
+            msgFile.write("* Name: " + nameOfMovie.text + " || " + str(gradeOfMovie) + " \n " + imageOfMovie + "\n\n" )
         else: 
-            msgFile.write("* Name: " + nameOfMovie.text + " || " + imageOfMovie)
+            msgFile.write("* Name: " + nameOfMovie.text + " \n " + imageOfMovie)
        
         mGrade = -99
         try:
