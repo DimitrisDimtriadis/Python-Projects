@@ -1,5 +1,4 @@
 import csv
-import CustomeModels
 from os import path
 
 moviedb = 'moviesDB.csv'

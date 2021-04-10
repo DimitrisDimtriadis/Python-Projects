@@ -1,10 +1,10 @@
 import smtplib
 import pandas
-import os
+import os, sys
 
 rowHeaders = ['Email', 'password', 'SourceMail', 'host']
-filepath = './data.csv'
-
+basePath = '\\data.csv'
+messagePath = '\\message.txt'
 
 def isGivenEmailValid(givenEmail):
     # Function to validate email
@@ -24,44 +24,48 @@ def isGivenEmailValid(givenEmail):
     return False
 
 
-def deleteRows(pandasReadFile, rowsToDelete):
+def deleteRows(pandasReadFile, rowsToDelete, mFilePath):
     # Function to delete rows base on given list with rows
     # For loop to delete and instant save the changes on file
-    pandasReadFile.drop(rowsToDelete.index).to_csv(filepath, index=False)
+    pandasReadFile.drop(rowsToDelete.index).to_csv(mFilePath, index=False)
 
 
-def insertEntry(mEmail, mPass, mSource, mHost):
+def insertEntry(mEmail, mPass, mSource, mHost, mFilePath):
     # Function to write entry on csv file
     mEntry = pandas.DataFrame([[mEmail, mPass, mSource, mHost]],
                               columns=rowHeaders)
-    mEntry.to_csv(filepath, mode='a', header=False, index=False)
+    mEntry.to_csv(mFilePath, mode='a', header=False, index=False)
 
 
-def checkIfNeedToInitDataFile():
+def checkIfNeedToInitDataFile(mFilePath):
     # Function to avoid script crashing for missing csv file
     # Check if file exists
-    if not os.path.isfile(filepath):
-        with open(filepath, 'w'):
+    if not os.path.isfile(mFilePath):
+        with open(mFilePath, 'w'):
             pass
         pandas.DataFrame(columns=rowHeaders).to_csv(
-            filepath, mode='a', header=True, index=False)
+            mFilePath, mode='a', header=True, index=False)
 
 
 def checkIfMessageToSendExist():
     # Function to check if file exist and return the path of txt file with message for sending via email
 
     # Check if file exist on current path and it is not empty
-    if os.path.isfile("./message.txt") and os.stat("./message.txt").st_size != 0:
-        return "./message.txt"    
+    textMessagePath  = os.path.dirname(sys.argv[0]) + messagePath
+    if os.path.isfile(textMessagePath) and os.stat(textMessagePath).st_size != 0:
+        return textMessagePath
     else:
         return ""
 
 # main function that do all the email things
 def main():
-    checkIfNeedToInitDataFile()
+    
+    emailsBasePath = os.path.dirname(sys.argv[0]) + basePath
+    
+    checkIfNeedToInitDataFile(emailsBasePath)
 
     # Read csv file
-    df = pandas.read_csv(filepath)
+    df = pandas.read_csv(emailsBasePath)
 
     # Global values
     # Address of the source email
@@ -124,7 +128,7 @@ def main():
 
             isSourceMailInvalid = False
             # To insert source email on csv
-            insertEntry(emailSource, passwordSource, 1, host)
+            insertEntry(emailSource, passwordSource, 1, host, emailsBasePath)
 
     else:
         emailSource = mSourceMail["Email"][0]
@@ -150,7 +154,7 @@ def main():
             # Check if mail is valid
             if isGivenEmailValid(emailToSend):
                 # Add it on csv
-                insertEntry(emailToSend, 0, 0, "")
+                insertEntry(emailToSend, 0, 0, "", emailsBasePath)
                 reciptentTosSendMsgs.append(emailToSend)
                 resultOfAddAnotherEmail = input(
                     "Do you need to add another one ? (Y/N) : ")
@@ -191,7 +195,7 @@ def main():
             server.login(emailSource, passwordSource)
         except Exception:
             print("\nSomething went wrong with given crendetials !\n")
-            deleteRows(df)
+            deleteRows(df, emailsBasePath)
             server.quit()
         
         # For multiple emails
