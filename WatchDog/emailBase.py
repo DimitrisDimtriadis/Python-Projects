@@ -1,10 +1,10 @@
 import smtplib
 import pandas
-import os, sys
+import os, sys, re
 
 rowHeaders = ['Email', 'password', 'SourceMail', 'host']
-basePath = '\\data.csv'
-messagePath = '\\message.txt'
+basePath = 'data.csv'
+messagePath = 'message.txt'
 
 def isGivenEmailValid(givenEmail):
     # Function to validate email
@@ -51,16 +51,29 @@ def checkIfMessageToSendExist():
     # Function to check if file exist and return the path of txt file with message for sending via email
 
     # Check if file exist on current path and it is not empty
-    textMessagePath  = os.path.dirname(sys.argv[0]) + messagePath
+    textMessagePath  = messagePath
+    if os.path.dirname(sys.argv[0]) != "":
+        textMessagePath  = checkOSSystem(os.path.dirname(sys.argv[0])+ "\\" + messagePath)
     if os.path.isfile(textMessagePath) and os.stat(textMessagePath).st_size != 0:
         return textMessagePath
     else:
         return ""
 
-# main function that do all the email things
+def checkOSSystem(mPath):
+    # If os.name == nt then the script runs on windows
+    if os.name == "nt":
+        return mPath
+    else:
+        newPath = re.sub(r"\\\\", "//", mPath)
+        return newPath
+
+# main function that does all the email things
 def main():
-    
-    emailsBasePath = os.path.dirname(sys.argv[0]) + basePath
+    # Set var for base path to check it later
+    emailsBasePath = checkOSSystem(basePath) 
+    # Check if returns nothing with sys.argv[0]. If its true then check the os to correct the path   
+    if os.path.dirname(sys.argv[0]) != "":
+        emailsBasePath = checkOSSystem(os.path.dirname(sys.argv[0]) + "\\" + basePath)    
     
     checkIfNeedToInitDataFile(emailsBasePath)
 
