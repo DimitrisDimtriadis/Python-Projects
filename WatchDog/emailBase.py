@@ -4,8 +4,8 @@ import os, sys, re
 import utilities as ut
 
 rowHeaders = ['Email', 'password', 'SourceMail', 'host']
-basePath = 'data.csv'
-messagePath = 'message.txt'
+basePath = 'flatFilesUtil/data.csv'
+messagePath = 'flatFilesUtil/message.txt'
 
 def isGivenEmailValid(givenEmail):
     # Function to validate email

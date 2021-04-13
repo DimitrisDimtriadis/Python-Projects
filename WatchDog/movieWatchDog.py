@@ -5,7 +5,7 @@ import utilities as ut
 from bs4 import BeautifulSoup as BF
 import re, sys, os
 
-messageFile = "message.txt"
+messageFile = "flatFilesUtil/message.txt"
 
 MoviesList = []
 

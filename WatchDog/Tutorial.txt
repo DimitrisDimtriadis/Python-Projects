@@ -1,5 +1,45 @@
-*To add on infinite loop to execute every X mins we use linux's 'crontab -e' more specific we add the 
-line bellow:
+_________________________________
+^^^Info about WatchDog project^^^
+_________________________________
 
+--python vs python3
+The app works with python3. If we use python and not the python3, we need to change it before excecute the script
+
+--To add on infinite loop to execute every X mins we use linux's 'crontab -e' more specific we add the 
+line bellow:
 * * * * * /home/pi/FTP/Transfered_Files/shellScriptAggregator.sh
 
+--emailBase.py
+The script that takes the message.txt file from flatFilesUtil/ and send the text through an email. It need the data.csv file that contains an email address (with credentials) to use it as source and destinations addresses. If data.csv doesn't exist then it ask from user to insert these info. At this 
+point on 'crontab -e' command, it need already exist this file to works automated.
+
+--movieWatchDog.py
+This script download the given page and extracts the data we need to store them in base
+
+--shellScriptAggregator.sh
+It the bash script that execute every py script we want on right row. If something go wrong, it notify the user
+
+--utilities.py
+Common function we need in other files
+
+--CustomeModels.py
+Classes with the models we need on scripts
+
+--flatFilesUtil (dir)
+It contains all the data files we need to run 
+	&&data.csv
+	 The csv file that contain the destinations emails and the source email with its credentials
+	&&message.txt 
+	 The message that the emailBase.py will send through an email
+
+--DBUtil
+All about SQLite3 (files and folders)
+	&&sqlite3Install.sh
+	 Script that install sqlite3 in to system
+	&&storageConfigure.sh
+	 Script that runs previous script and do what it need to create the db of project
+	&&watchDogDB.sqlite
+	 The Base of whole project
+	&&sqlCommads (dir)
+	 The folder with all the .sql command (in file). Basically its the 'create table' and stuff like that
+	
