@@ -3,7 +3,9 @@ import csvBase as CB
 import requests
 import emailBase
 from bs4 import BeautifulSoup as BF
-import re
+import re, sys, os
+
+messageFile = "message.txt"
 
 MoviesList = []
 
@@ -15,8 +17,13 @@ def extractImdbGradeFromText(mText):
 
 def createInfoMsgToSend(elementList):
 
+    messageFilePath = emailBase.checkOSSystem(messageFile) 
+    # Check if returns nothing with sys.argv[0]. If its true then check the os to correct the path   
+    if os.path.dirname(sys.argv[0]) != "":
+        messageFilePath = emailBase.checkOSSystem(os.path.dirname(sys.argv[0]) + "\\" + messageFile)    
+
     # Create (If doesn't exist) message.txt or clean it to create a new message
-    msgFile = open("message.txt", "w")
+    msgFile = open(messageFilePath, "w")
     msgFile.write("New movies : \n")
     
     # Reset list to avoid conflicts
@@ -83,5 +90,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    print("ok")
+    print("Ok. All info have been downloaded")
    

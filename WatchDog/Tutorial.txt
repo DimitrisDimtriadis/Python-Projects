@@ -1,0 +1,5 @@
+*To add on infinite loop to execute every X mins we use linux's 'crontab -e' more specific we add the 
+line bellow:
+
+* * * * * /home/pi/FTP/Transfered_Files/shellScriptAggregator.sh
+
