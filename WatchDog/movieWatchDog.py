@@ -1,7 +1,7 @@
 import CustomeModels as mModel
 import csvBase as CB
 import requests
-import emailBase
+import utilities as ut
 from bs4 import BeautifulSoup as BF
 import re, sys, os
 
@@ -17,10 +17,8 @@ def extractImdbGradeFromText(mText):
 
 def createInfoMsgToSend(elementList):
 
-    messageFilePath = emailBase.checkOSSystem(messageFile) 
-    # Check if returns nothing with sys.argv[0]. If its true then check the os to correct the path   
-    if os.path.dirname(sys.argv[0]) != "":
-        messageFilePath = emailBase.checkOSSystem(os.path.dirname(sys.argv[0]) + "\\" + messageFile)    
+    # Set the right path for the application file 
+    messageFilePath = ut.findParentPath(messageFile) 
 
     # Create (If doesn't exist) message.txt or clean it to create a new message
     msgFile = open(messageFilePath, "w")
