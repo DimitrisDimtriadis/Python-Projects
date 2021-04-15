@@ -3,5 +3,7 @@ CREATE TABLE IF NOT EXISTS MoviesTb(
 	Title TEXT NOT NULL,
 	Grade REAL,
 	Notified INTEGER NOT NULL,
+	EntryDate INTEGER,
+	ModifyDate INTEGER,
 	ImageUrl TEXT
 );

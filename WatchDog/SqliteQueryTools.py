@@ -1,21 +1,24 @@
 import sqlite3
 from sqlite3 import Error
+import watchDogUtilities as ut
 
+dbForTestingPath = "DBUtil\watchDogDB.sqlite"
 # Creater a database connection to a sqlite database
-def openConnectionToDB(dbFile):
+def dbOpenConnection(dbFile):
     try:
         tempConnection = sqlite3.connect(dbFile)
-        print(sqlite3.version)
+        print("DB connection OPEN !")
         #Returns the connection to execute the sql commands
         return tempConnection
-    except Error:
+    except sqlite3.Error:
         print(Error)
     return None
 
 # If connection already exist. Close it
-def closeConnectionToDB(connectionToClose):    
+def dbCloseConnection(connectionToClose):    
     if connectionToClose:
         connectionToClose.close()
+        print("DB connection CLOSE !")
 
 # Function we need to execute SELECT command to given connection (DB)
 def dbSELECT(dbConnection, tableName, fieldsToReturn=None, whereStatementText=None):
@@ -46,7 +49,7 @@ def dbINSERT(dbConnection, tableName, fieldsList, valueList):
     executeQuery(dbConnection, sql)
 
 # Function we need to execute UPDATE command to given connection (DB)
-def dbUpdate(dbConnection, tableName, fieldsList, valueList, whereStatementText):
+def dbUPDATE(dbConnection, tableName, fieldsList, valueList, whereStatementText):
 # UPDATE table_name
 # SET column1 = value1, column2 = value2, ...
 # WHERE condition;
@@ -132,16 +135,18 @@ def setValuesInQuery(mQuery, valueList, stringToAppendOnEnd, equalFields=None, i
     
 if __name__ == '__main__':
     """ We need to make openConnectionToDB to throw exception if it find an error to avoid any problem """
-    dbConnection = openConnectionToDB("D:\sTree\Python Tool\WatchDog\watchDogDB.sqlite")
+    dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(dbForTestingPath)))
     tempFields = ["Title", "Grade", "Notified", "ImageUrl"]
     tempValues = ["Avengers", 10, 0, "mUrl"]
     
     # dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)    
-    dbUpdate(dbConnection, "MoviesTb", tempFields, tempValues, "id = 1")
+    # dbUPDATE(dbConnection, "MoviesTb", tempFields, tempValues, "id = 1")
     # dbCustomQuery(dbConnection, "INSERT INTO MoviesTb (Title, Grade, Notified) VALUES('Darksiders', 6, 0)")
     # mRes = dbCustomQuery(dbConnection, "Select count(*) from MoviesTb")
-    dbDELETE(dbConnection, "MoviesTb", "id = 1")
-    mRes = dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])
-    # mRes = dbSELECT(dbConnection, "MoviesTb")
-    print(mRes)
-    closeConnectionToDB(dbConnection)
+    # dbDELETE(dbConnection, "MoviesTb", "id != 1")
+    # dbDELETE(dbConnection, "MoviesTb", 'id != 1')
+    # mRes = dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])
+    mRes = dbSELECT(dbConnection, "MoviesTb")
+    for row in mRes:
+        print(row)
+    dbCloseConnection(dbConnection)

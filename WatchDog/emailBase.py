@@ -1,6 +1,6 @@
 import smtplib
 import pandas
-import os, sys, re
+import os
 import watchDogUtilities as ut
 
 rowHeaders = ['Email', 'password', 'SourceMail', 'host']
