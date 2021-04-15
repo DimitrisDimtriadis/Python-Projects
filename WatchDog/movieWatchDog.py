@@ -1,9 +1,8 @@
 import CustomeModels as mModel
 import csvBase as CB
-import requests
 import utilities as ut
 from bs4 import BeautifulSoup as BF
-import re, sys, os
+import re, requests
 
 messageFile = "flatFilesUtil/message.txt"
 

@@ -4,3 +4,4 @@ message.txt
 env/
 .vscode/
 *.pyc
+*.sqlite
