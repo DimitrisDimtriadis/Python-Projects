@@ -53,8 +53,7 @@ def createInfoMsgToSend(elementList):
             mGrade = float(gradeOfMovie)
         except:
             print("Something went wrong with convert string to float. Grade: "+gradeOfMovie)
-        if "Two of Us (Deux) (2019)" == nameOfMovie.text:
-            print("asd")
+
         tempMovie = mModel.Movie(nameOfMovie.text, mGrade, imageOfMovie)
         
         #Append on global list the tempObject

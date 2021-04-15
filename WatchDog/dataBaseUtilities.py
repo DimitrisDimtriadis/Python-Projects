@@ -31,9 +31,19 @@ def dbSELECT(dbConnection, tableName, fieldsToReturn=None, whereStatementText=No
     mCursor = dbConnection.cursor()
     mCursor.execute(sql)
     
+    fieldNames = list(map(lambda x:x[0], mCursor.description))
+
+    dictList = []
     rows = mCursor.fetchall()
     for row in rows:
-        print(row)
+        # for field in 
+        tempDict = {}
+        mCount = 0 
+        for keyField in fieldNames:
+            tempDict[keyField] = row[mCount]
+            mCount += 1
+        dictList.append(tempDict)
+    print(dictList)
         
 # Function we need to execute INSERT command to given connection (DB)
 def dbINSERT(dbConnection, tableName, fieldsList, valueList):    
@@ -99,5 +109,5 @@ if __name__ == '__main__':
     
     # dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)    
     # dbUpdate(dbConnection, "MoviesTb", tempFields, tempValues, "id = 1")
-    dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['id', 'Title','Grade'])
+    dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])
     closeConnectionToDB(dbConnection)

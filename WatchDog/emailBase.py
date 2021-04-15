@@ -189,8 +189,7 @@ def main():
         try:
             server = smtplib.SMTP_SSL(host, port)
         except smtplib.socket.gaierror:
-            print("\nSomething went wrong with SMTP_SSL (host or port) !\n")
-            server.quit()
+            print("\nSomething went wrong with SMTP_SSL (host or port) !\n")            
         
         # Try to login on email with given crentetial
         try:
