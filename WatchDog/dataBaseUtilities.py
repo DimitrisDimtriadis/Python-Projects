@@ -30,20 +30,9 @@ def dbSELECT(dbConnection, tableName, fieldsToReturn=None, whereStatementText=No
     
     mCursor = dbConnection.cursor()
     mCursor.execute(sql)
-    
-    fieldNames = list(map(lambda x:x[0], mCursor.description))
-
-    dictList = []
-    rows = mCursor.fetchall()
-    for row in rows:
-        # for field in 
-        tempDict = {}
-        mCount = 0 
-        for keyField in fieldNames:
-            tempDict[keyField] = row[mCount]
-            mCount += 1
-        dictList.append(tempDict)
-    print(dictList)
+    mRows = mCursor.fetchall()
+    mDictList = returnDictWithFieldAndValues(mCursor, mRows)
+    return mDictList
         
 # Function we need to execute INSERT command to given connection (DB)
 def dbINSERT(dbConnection, tableName, fieldsList, valueList):    
@@ -69,14 +58,46 @@ def dbUpdate(dbConnection, tableName, fieldsList, valueList, whereStatementText)
     sql = "UPDATE " + tableName + " SET "
     sql = setValuesInQuery(sql, valueList, " ", fieldsList)
     sql += "WHERE " + whereStatementText
-    print(sql)
     executeQuery(dbConnection, sql)
+
+# Function to execute a custom query user gave.
+def dbCustomQuery(dbConnection, customQuery):
+    mRes = executeCustomQuery(dbConnection, customQuery)
+    if mRes:
+        return mRes
 
 # To avoid repeate the bellow code. It just execute the given sql query to base
 def executeQuery(mConnection, mSQL):
     mCursor = mConnection.cursor()
     mCursor.execute(mSQL)
     mConnection.commit()
+
+def executeCustomQuery(mConnection, mSQL):
+    mCursor = mConnection.cursor()
+    mCursor.execute(mSQL)
+    nRows = mCursor.fetchall()
+    if nRows != []:
+        return returnDictWithFieldAndValues(mCursor, nRows)
+    else:
+        mConnection.commit()
+
+
+# Function that returns a list with dictionaries that on key they have the field name and on value the value of the field
+# It was created to support SELECT queries
+def returnDictWithFieldAndValues(nCursor, mRows):
+    
+    fieldNames = list(map(lambda x:x[0], nCursor.description))
+    dictList = []
+
+    for row in mRows:
+        # for field in 
+        tempDict = {}
+        mCount = 0 
+        for keyField in fieldNames:
+            tempDict[keyField] = row[mCount]
+            mCount += 1
+        dictList.append(tempDict)
+    return dictList
 
 # Simple definition which takes values and if it is string then add '' for query
 def checkIfNeedsTextSymbolForQuery(mVal, isField=False):
@@ -105,9 +126,13 @@ if __name__ == '__main__':
     """ We need to make openConnectionToDB to throw exception if it find an error to avoid any problem """
     dbConnection = openConnectionToDB("D:\sTree\Python Tool\WatchDog\watchDogDB.sqlite")
     tempFields = ["Title", "Grade", "Notified", "ImageUrl"]
-    tempValues = ["Actionman", 3.3, 0, "mUrl"]
+    tempValues = ["Kamikaxi agapai mou", 3.3, 0, "mUrl"]
     
     # dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)    
-    # dbUpdate(dbConnection, "MoviesTb", tempFields, tempValues, "id = 1")
-    dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])
+    dbUpdate(dbConnection, "MoviesTb", tempFields, tempValues, "id = 1")
+    mRes = dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])
+    # dbCustomQuery(dbConnection, "INSERT INTO MoviesTb (Title, Grade, Notified) VALUES('Darksiders', 6, 0)")
+    # mRes = dbCustomQuery(dbConnection, "Select count(*) from MoviesTb")
+    # mRes = dbSELECT(dbConnection, "MoviesTb")
+    print(mRes)
     closeConnectionToDB(dbConnection)
