@@ -60,6 +60,14 @@ def dbUpdate(dbConnection, tableName, fieldsList, valueList, whereStatementText)
     sql += "WHERE " + whereStatementText
     executeQuery(dbConnection, sql)
 
+def dbDELETE(dbConnection, tableName, whereStatementText):
+    
+    if not whereStatementText or whereStatementText == '':
+        raise Exception("WHERE statement in query is either 'None' either empty")
+    
+    sql = "DELETE FROM " + tableName + " WHERE " + whereStatementText
+    executeQuery(dbConnection, sql)
+
 # Function to execute a custom query user gave.
 def dbCustomQuery(dbConnection, customQuery):
     mRes = executeCustomQuery(dbConnection, customQuery)
@@ -126,13 +134,14 @@ if __name__ == '__main__':
     """ We need to make openConnectionToDB to throw exception if it find an error to avoid any problem """
     dbConnection = openConnectionToDB("D:\sTree\Python Tool\WatchDog\watchDogDB.sqlite")
     tempFields = ["Title", "Grade", "Notified", "ImageUrl"]
-    tempValues = ["Kamikaxi agapai mou", 3.3, 0, "mUrl"]
+    tempValues = ["Avengers", 10, 0, "mUrl"]
     
     # dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)    
     dbUpdate(dbConnection, "MoviesTb", tempFields, tempValues, "id = 1")
-    mRes = dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])
     # dbCustomQuery(dbConnection, "INSERT INTO MoviesTb (Title, Grade, Notified) VALUES('Darksiders', 6, 0)")
     # mRes = dbCustomQuery(dbConnection, "Select count(*) from MoviesTb")
+    dbDELETE(dbConnection, "MoviesTb", "id = 1")
+    mRes = dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])
     # mRes = dbSELECT(dbConnection, "MoviesTb")
     print(mRes)
     closeConnectionToDB(dbConnection)
