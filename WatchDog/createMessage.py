@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite3, sys
 import SqliteQueryTools as sqlT
 import watchDogUtilities as ut
 import CustomeModels as cModels
@@ -11,17 +11,25 @@ def createMessageToSendWithEmail():
     # Create the whole path for message.txt and watchDog.sqlite files
     messagePath = ut.findParentPath(nameOfEmailMessage)    
 
-    # Create (If doesn't exist) message.txt or clean it to create a new message
-    msgFile = open(messagePath, "w")
-
     # Create db Connection
     dbConnection = sqlT.dbOpenConnection(dbPath)
 
     # Fetch all wanted data from base
     moviesList = sqlT.dbSELECT(dbConnection, "MoviesTb", whereStatementText="Notified = 1")
+
+    # If it doen't contain any data to send EXIT with this code to notify bash script
+    if len(moviesList) == 0:
+        # Custom exit code to avoid misleading on main pipe of script
+        sys.exit(33)
     
+    # Create (If doesn't exist) message.txt or clean it to create a new message
+    msgFile = open(messagePath, "w")
+
     # Add headline
-    msgFile.write("New (" + str(len(moviesList)) + ") movies : \n")     
+    if len(moviesList) > 1:
+        msgFile.write(str(len(moviesList)) + " new movies ! \n")
+    else:
+        msgFile.write("1 new movie ! \n")
 
     for row in moviesList:
         tempMovieObj = cModels.Movie(row["ID"], row['Title'], row['Grade'], row['ImageUrl'], row['Notified'], row['EntryDate'], row['ModifyDate'])
@@ -45,7 +53,11 @@ def updateDBThatUserReceiveTheInfo():
     sqlT.dbCloseConnection(dbConnection)
 
 if __name__=="__main__":
-    createMessageToSendWithEmail()
-    print("ok")
-    createMessageToSendWithEmail()   
-    updateDBThatUserReceiveTheInfo()
+
+    # Check if script call with input
+    if len(sys.argv) > 1 and sys.argv[1] == "update":
+        # Update data on base
+        updateDBThatUserReceiveTheInfo()    
+    else:
+        # Just create the message to send
+        createMessageToSendWithEmail()

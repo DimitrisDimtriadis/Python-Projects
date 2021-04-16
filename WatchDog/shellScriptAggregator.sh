@@ -10,26 +10,29 @@ parentFilePath=$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 #Function to get the status from last command excecuted
 checkStatus(){
-	if [ $1 != '0' ]
+	if [ $1 != '0' ] && [ $1 != '33' ] 
 	then
 		echo "There was a problem with $2 script."
 		echo "Please fix it before precedure"
-		return 1
-	else
-		return 0
 	fi
 }
 #Function that used to run specific .py files with python3. It return the status of excecution
 runSpecificPyFile(){
 	#Get the path of bash shell script. We append the input argument to set the right path
 	filePath=$parentFilePath$1	
-	#Execute the script to access site and get the info we want
-	python3 $filePath
+	if [ $# -le 1 ]
+	then
+		#Execute the script to access site and get the info we want
+		python3 $filePath
+	else
+		#Execute the script to access site and get the info we want
+		python3 $filePath $2
+	fi
 	#Save on var the exit status
 	runPyCommandStatus=$?
 	#Call the function to check if status was not 0, to notify user
 	checkStatus $runPyCommandStatus $1
-	return $?
+	return $runPyCommandStatus
 }
 
 echo "Procedure started..."
@@ -60,7 +63,15 @@ then
 		runSpecificPyFile $nameOfEmailBase
 		#Get status of previous execution
 		emailBaseStatus=$?
-		"Procedure ends successfully"
+		
+		if [ $emailBaseStatus == '0' ]
+		then
+			runSpecificPyFile $nameOfCreateMessage "update"
+		fi
+
+	elif [ $createMessageStatus == '33' ]
+	then
+		echo "Procedure ends successfully. There is nothing new to send !"
 	else
 		echo "Procedure stuck with createMessage script !!!"
 	fi

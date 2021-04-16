@@ -54,7 +54,7 @@ def checkIfMessageToSendExist():
     # Check if file exist on current path and it is not empty
     textMessagePath  = ut.findParentPath(messagePath)
     if os.path.isfile(textMessagePath) and os.stat(textMessagePath).st_size != 0:
-        print("The path for message.txt is: " + textMessagePath)
+        # print("The path for message.txt is: " + textMessagePath)
         return textMessagePath
     else:
         print("Something went wrong with message.txt")
