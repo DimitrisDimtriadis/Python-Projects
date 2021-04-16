@@ -7,7 +7,7 @@ dbForTestingPath = "DBUtil\watchDogDB.sqlite"
 def dbOpenConnection(dbFile):
     try:
         tempConnection = sqlite3.connect(dbFile)
-        print("DB connection OPEN !")
+        # print("DB connection OPEN !")
         #Returns the connection to execute the sql commands
         return tempConnection
     except sqlite3.Error:
@@ -18,7 +18,7 @@ def dbOpenConnection(dbFile):
 def dbCloseConnection(connectionToClose):    
     if connectionToClose:
         connectionToClose.close()
-        print("DB connection CLOSE !")
+        # print("DB connection CLOSE !")
 
 # Function we need to execute SELECT command to given connection (DB)
 def dbSELECT(dbConnection, tableName, fieldsToReturn=None, whereStatementText=None):

@@ -3,6 +3,7 @@
 #Name of files used to specify the path to run the commands
 nameOfWatchDog="/movieWatchDog.py"
 nameOfEmailBase="/emailBase.py"
+nameOfCreateMessage="/createMessage.py"
 nameOfDirForSourceFiles="/flatFilesUtil"
 #The path where script exist
 parentFilePath=$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
@@ -48,8 +49,21 @@ watchDogStatus=$?
 #If the watchDogStatus exit with 0 then execute the bellow code
 if [ $watchDogStatus == '0' ]
 then
-	#Run movieWatchDog
-	runSpecificPyFile $nameOfEmailBase
+	#Run createMessage
+	runSpecificPyFile $nameOfCreateMessage
 	#Get status of previous execution
-	emailBaseStatus=$?
+	createMessageStatus=$?
+
+	if [ $createMessageStatus == '0' ]
+	then
+		#Run emailBase
+		runSpecificPyFile $nameOfEmailBase
+		#Get status of previous execution
+		emailBaseStatus=$?
+		"Procedure ends successfully"
+	else
+		echo "Procedure stuck with createMessage script !!!"
+	fi
+else
+	echo "Procedure stuck with watchDog script !!!"
 fi
