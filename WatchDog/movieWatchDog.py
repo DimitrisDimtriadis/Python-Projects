@@ -47,15 +47,15 @@ def createInfoMsgToSend(elementList):
         mRes = sqlT.dbSELECT(dbConnection, 'MoviesTb', whereStatementText= "Title = '"+nameOfMovieText + "'")       
         
         if not mRes:
-            if locationOfGrade != -1 or gradeOfMovie != -1:
-                sqlT.dbINSERT(dbConnection, "MoviesTb", ['Title', 'Grade', 'Notified', 'ImageUrl', 'EntryDate'], [nameOfMovieText, gradeOfMovie, 0, imageOfMovie, datetime.datetime.now().timestamp()])
-            else:
-                sqlT.dbINSERT(dbConnection, "MoviesTb", ['Title', 'Notified', 'ImageUrl', 'EntryDate'], [nameOfMovieText, 0, imageOfMovie, datetime.datetime.now().timestamp()])
-        
+            # If entry doesn't exist insert new row
+            sqlT.dbINSERT(dbConnection, "MoviesTb", ['Title', 'Grade', 'Notified', 'ImageUrl', 'EntryDate'], [nameOfMovieText, gradeOfMovie, 0, imageOfMovie, datetime.datetime.now().timestamp()])       
         elif len(mRes)==1:
-            print("asd")asd
-            
-            
+            # If entry does exist update the row
+            if locationOfGrade != -1 or gradeOfMovie != -1:
+                sqlT.dbUPDATE(dbConnection, "MoviesTb", ['Grade', 'ImageUrl', 'ModifyDate'], [gradeOfMovie, imageOfMovie, datetime.datetime.now().timestamp()], "ID = " + str(mRes[0]['ID']))
+            else:
+                # If grade is not valid don't add it
+                sqlT.dbUPDATE(dbConnection, "MoviesTb", ['ImageUrl', 'ModifyDate'], [imageOfMovie, datetime.datetime.now().timestamp()], "ID = " + str(mRes[0]['ID']))
         
     sqlT.dbCloseConnection(dbConnection)
         

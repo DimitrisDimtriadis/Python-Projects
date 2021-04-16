@@ -136,11 +136,11 @@ def setValuesInQuery(mQuery, valueList, stringToAppendOnEnd, equalFields=None, i
 if __name__ == '__main__':
     """ We need to make openConnectionToDB to throw exception if it find an error to avoid any problem """
     dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(dbForTestingPath)))
-    tempFields = ["Title", "Grade", "Notified", "ImageUrl"]
-    tempValues = ["Avengers", 10, 0, "mUrl"]
+    tempFields = ["Notified"]
+    tempValues = [1]
     
     # dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)    
-    # dbUPDATE(dbConnection, "MoviesTb", tempFields, tempValues, "id = 1")
+    dbUPDATE(dbConnection, "MoviesTb", tempFields, tempValues, "Notified = 0")
     # dbCustomQuery(dbConnection, "INSERT INTO MoviesTb (Title, Grade, Notified) VALUES('Darksiders', 6, 0)")
     # mRes = dbCustomQuery(dbConnection, "Select count(*) from MoviesTb")
     # dbDELETE(dbConnection, "MoviesTb", "id != 1")
