@@ -196,7 +196,7 @@ def main():
             server.login(emailSource, passwordSource)
         except Exception:
             print("\nSomething went wrong with given crendetials !\n")
-            deleteRows(df, emailsBasePath)
+            deleteRows(df, emailsBasePath, emailsBasePath)
             server.quit()
         
         # For multiple emails

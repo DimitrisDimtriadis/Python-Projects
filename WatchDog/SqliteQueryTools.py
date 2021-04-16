@@ -140,7 +140,7 @@ if __name__ == '__main__':
     tempValues = [1]
     
     # dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)    
-    dbUPDATE(dbConnection, "MoviesTb", tempFields, tempValues, "Notified = 0")
+    # dbUPDATE(dbConnection, "MoviesTb", tempFields, tempValues, "Notified = 0")
     # dbCustomQuery(dbConnection, "INSERT INTO MoviesTb (Title, Grade, Notified) VALUES('Darksiders', 6, 0)")
     # mRes = dbCustomQuery(dbConnection, "Select count(*) from MoviesTb")
     # dbDELETE(dbConnection, "MoviesTb", "id != 1")
