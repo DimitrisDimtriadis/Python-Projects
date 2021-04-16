@@ -4,5 +4,5 @@ message.txt
 env/
 .vscode/
 *.pyc
-/*.sqlite
-WatchDog/watchDogDB.sqlite
+*.sqlite
+WatchDog/DBUtil/watchDogDB.sqlite

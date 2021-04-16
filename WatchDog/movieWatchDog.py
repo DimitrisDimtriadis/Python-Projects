@@ -3,7 +3,7 @@ import SqliteQueryTools as sqlT
 from bs4 import BeautifulSoup as BF
 import re, requests, datetime
 
-messageFile = "flatFilesUtil/message.txt"
+# Paths for files that script needs
 dbFile = "DBUtil/watchDogDB.sqlite"
 
 MoviesList = []
@@ -15,13 +15,6 @@ def extractImdbGradeFromText(mText):
     return -1
 
 def createInfoMsgToSend(elementList):
-
-    # Set the right path for the application file 
-    messageFilePath = ut.findParentPath(messageFile) 
-
-    # Create (If doesn't exist) message.txt or clean it to create a new message
-    msgFile = open(messageFilePath, "w")
-    msgFile.write("New movies : \n")
 
     # Open connection with SQLite DB to interact with it
     dbConnection = sqlT.dbOpenConnection(ut.checkOSSystem(ut.findParentPath(dbFile)))
@@ -48,7 +41,7 @@ def createInfoMsgToSend(elementList):
         
         if not mRes:
             # If entry doesn't exist insert new row
-            sqlT.dbINSERT(dbConnection, "MoviesTb", ['Title', 'Grade', 'Notified', 'ImageUrl', 'EntryDate'], [nameOfMovieText, gradeOfMovie, 0, imageOfMovie, datetime.datetime.now().timestamp()])       
+            sqlT.dbINSERT(dbConnection, "MoviesTb", ['Title', 'Grade', 'Notified', 'ImageUrl', 'EntryDate'], [nameOfMovieText, gradeOfMovie, 1, imageOfMovie, datetime.datetime.now().timestamp()])       
         elif len(mRes)==1:
             # If entry does exist update the row
             if locationOfGrade != -1 or gradeOfMovie != -1:
@@ -58,23 +51,6 @@ def createInfoMsgToSend(elementList):
                 sqlT.dbUPDATE(dbConnection, "MoviesTb", ['ImageUrl', 'ModifyDate'], [imageOfMovie, datetime.datetime.now().timestamp()], "ID = " + str(mRes[0]['ID']))
         
     sqlT.dbCloseConnection(dbConnection)
-        
-        # if locationOfGrade != -1 or gradeOfMovie != -1:
-        #     # Get only the grade            
-        #     msgFile.write("* Name: " + nameOfMovie.text + " || " + str(gradeOfMovie) + " \n " + imageOfMovie + "\n\n" )
-        # else: 
-        #     msgFile.write("* Name: " + nameOfMovie.text + " \n " + imageOfMovie)
-       
-        # mGrade = -99
-        # try:
-        #     mGrade = float(gradeOfMovie)
-        # except:
-        #     print("Something went wrong with convert string to float. Grade: "+gradeOfMovie)
-
-        # tempMovie = mModel.Movie(nameOfMovie.text, mGrade, imageOfMovie)
-        
-        # #Append on global list the tempObject
-        # MoviesList.append(tempMovie)        
 
 def main():
     # main function
