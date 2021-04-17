@@ -15,7 +15,7 @@ def dbOpenConnection(dbFile):
     return None
 
 # If connection already exist. Close it
-def dbCloseConnection(connectionToClose):    
+def dbCloseConnection(connectionToClose):
     if connectionToClose:
         connectionToClose.close()
         # print("DB connection CLOSE !")
@@ -38,12 +38,12 @@ def dbSELECT(dbConnection, tableName, fieldsToReturn=None, whereStatementText=No
     return mDictList
         
 # Function we need to execute INSERT command to given connection (DB)
-def dbINSERT(dbConnection, tableName, fieldsList, valueList):    
+def dbINSERT(dbConnection, tableName, fieldsList, valueList):
     #Catch error with wrong number of fields or values
     if len(fieldsList) != len(valueList):
         raise Exception("Number of fields differ from values")
         
-    sql = "INSERT INTO "+ tableName + "("    
+    sql = "INSERT INTO "+ tableName + "("
     sql = setValuesInQuery(sql, fieldsList, ") VALUES(", isField=True)
     sql = setValuesInQuery(sql, valueList, ")")
     executeQuery(dbConnection, sql)
@@ -123,7 +123,7 @@ def setEqualityForQuery(mField, mVal):
 # A For-loop to add all the value to query from a list with values
 def setValuesInQuery(mQuery, valueList, stringToAppendOnEnd, equalFields=None, isField=False):
     
-    for i, mVal in enumerate(valueList):        
+    for i, mVal in enumerate(valueList):
         if i != 0: mQuery += ',' #Append , between values
         if equalFields:
             mQuery += setEqualityForQuery(equalFields[i], checkIfNeedsTextSymbolForQuery(mVal))
@@ -139,11 +139,11 @@ if __name__ == '__main__':
     tempFields = ["Notified"]
     tempValues = [1]
     
-    # dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)    
+    # dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)
     # dbUPDATE(dbConnection, "MoviesTb", tempFields, tempValues, "Notified = 0")
     # dbCustomQuery(dbConnection, "INSERT INTO MoviesTb (Title, Grade, Notified) VALUES('Darksiders', 6, 0)")
     # mRes = dbCustomQuery(dbConnection, "Select count(*) from MoviesTb")
-    # dbDELETE(dbConnection, "MoviesTb", "id != 1111")
+    dbDELETE(dbConnection, "MoviesTb", "id != 1111")
     # dbDELETE(dbConnection, "MoviesTb", 'id != 1')
     # mRes = dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])
     mRes = dbSELECT(dbConnection, "MoviesTb")

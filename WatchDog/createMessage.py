@@ -57,7 +57,9 @@ if __name__=="__main__":
     # Check if script call with input
     if len(sys.argv) > 1 and sys.argv[1] == "update":
         # Update data on base
-        updateDBThatUserReceiveTheInfo()    
+        updateDBThatUserReceiveTheInfo()
+        print("!!! Mark them as read !!!")    
     else:
         # Just create the message to send
         createMessageToSendWithEmail()
+        print("!!! Create message !!!")    
