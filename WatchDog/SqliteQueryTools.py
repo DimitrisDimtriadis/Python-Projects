@@ -1,5 +1,6 @@
-import sqlite3
+import sqlite3, sys
 from sqlite3 import Error
+from typing import Type
 import watchDogUtilities as ut
 
 dbForTestingPath = "DBUtil\watchDogDB.sqlite"
@@ -132,21 +133,111 @@ def setValuesInQuery(mQuery, valueList, stringToAppendOnEnd, equalFields=None, i
               
     mQuery += stringToAppendOnEnd
     return mQuery
-    
-if __name__ == '__main__':
+
+# The main function that called when you excecute te file.
+# I basically create it to test function of the class 
+def main():
     """ We need to make openConnectionToDB to throw exception if it find an error to avoid any problem """
     dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(dbForTestingPath)))
-    tempFields = ["Notified"]
-    tempValues = [1]
+    tempFields = ["Title", "Notified"]
+    tempValues = ["ok 123", 0]
     
-    # dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)
+    dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)
     # dbUPDATE(dbConnection, "MoviesTb", tempFields, tempValues, "Notified = 0")
     # dbCustomQuery(dbConnection, "INSERT INTO MoviesTb (Title, Grade, Notified) VALUES('Darksiders', 6, 0)")
     # mRes = dbCustomQuery(dbConnection, "Select count(*) from MoviesTb")
-    dbDELETE(dbConnection, "MoviesTb", "id != 1111")
-    # dbDELETE(dbConnection, "MoviesTb", 'id != 1')
+    # dbDELETE(dbConnection, "MoviesTb", "id != -1")
     # mRes = dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])
     mRes = dbSELECT(dbConnection, "MoviesTb")
     for row in mRes:
         print(row)
-    dbCloseConnection(dbConnection)
+    dbCloseConnection(dbConnection)    
+
+# Main function which called when user add argument. It is the main algorithm to manipulate the base
+def manualMain():
+    
+    calledMode = sys.argv[1]
+    defaultChoises = ["SELECT", "DELETE", "UPDATE", "INSERT", "CUSTOM"]
+    
+    if calledMode == "db":
+    
+        print("Please select the number of on the following mode:")
+        print("(1) SELECT on a specific table")
+        print("(2) DELETE rows on a specific table")
+        print("(3) UPDATE rows on a specific table")
+        print("(4) INSERT rows on a specific table")
+        print("(5) Custom query on a specif table")
+        print("If you want to exit from program just insert 'exit'.\n")
+
+        userInputTrig = True
+        while userInputTrig:
+            userEntered = input()
+            try:                
+                if userEntered.lower() == "exit":
+                    return
+                elif int(userEntered)-1 < len(defaultChoises) and int(userEntered)-1 >= 0:
+                    remoteMode(defaultChoises[int(userEntered)-1])
+                    userInputTrig = False            
+                else:
+                    print("Your write a invalid command. Please try again !") 
+            except ValueError:
+                print("Your write a invalid command. Please try again !") 
+    else:
+        print("Wrong argument. The only argument at this point is 'db' !")                            
+
+# Functionality of manual manipulation of base
+def remoteMode(mMode):
+    print("Please choose on which table you want to work:")
+    
+    dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(dbForTestingPath)))
+    cursor = dbConnection.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    
+    # Create a dictionary with table to use it later for user choice
+    dictionaryWithTables = {}
+
+    for i, mTables in enumerate(cursor.fetchall()):
+        # Get table's name
+        dictionaryWithTables[i] = mTables[0]       
+        print("("+str(i+1)+") " + dictionaryWithTables[i])
+    print("If you want to exit from program just insert 'exit'.\n")
+    
+    modeTrig = True
+    while modeTrig:
+        userInput = input()
+        try:            
+            if userInput.lower() == "exit":
+                return
+            elif int(userInput)-1 in dictionaryWithTables.keys():
+                executeUserChoise(dbConnection, mMode, dictionaryWithTables[int(userInput)-1])
+                modeTrig = False
+            else:
+                print("No valid choice. Please try again !")    
+        except TypeError:
+            print("No valid choice. Please try again !")
+        except ValueError:
+            print("No valid choice. Please try again !")
+
+# After taking connection, user table choise and mode, we execute the command
+def executeUserChoise(mConnection, mMode, mTable):
+    ''' YOU NEED TO ADD THE FUNCTIONS HERE '''
+    if mMode == "SELECT":
+        print(mMode)
+    elif mMode == "DELETE":
+        print(mMode)
+    elif mMode == "UPDATE":
+        print(mMode)
+    elif mMode == "INSERT":
+        print(mMode)
+    elif mMode == "CUSTOM":
+        print(mMode)
+    else:
+        print("Something went wrong")
+
+if __name__ == '__main__':
+    
+    # If user called script without argument execute the default main function
+    if len(sys.argv) == 1:
+        main()
+    else:
+        manualMain()        
