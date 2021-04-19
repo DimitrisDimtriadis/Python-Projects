@@ -78,6 +78,11 @@ def dbCustomQuery(dbConnection, customQuery):
     if mRes:
         return mRes
 
+# Get all the column names from a given table of db
+def dbGetColumnNames(dbConnection, mTable):
+    mCursor = dbConnection.execute("SELECT * FROM " + mTable)
+    return list(map(lambda x:x[0], mCursor.description))
+
 # To avoid repeate the bellow code. It just execute the given sql query to base
 def executeQuery(mConnection, mSQL):
     mCursor = mConnection.cursor()
@@ -92,7 +97,6 @@ def executeCustomQuery(mConnection, mSQL):
         return returnDictWithFieldAndValues(mCursor, nRows)
     else:
         mConnection.commit()
-
 
 # Function that returns a list with dictionaries that on key they have the field name and on value the value of the field
 # It was created to support SELECT queries
@@ -142,13 +146,12 @@ def main():
     tempFields = ["Title", "Notified"]
     tempValues = ["ok 123", 0]
     
-    dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)
+    # dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)
     # dbUPDATE(dbConnection, "MoviesTb", tempFields, tempValues, "Notified = 0")
     # dbCustomQuery(dbConnection, "INSERT INTO MoviesTb (Title, Grade, Notified) VALUES('Darksiders', 6, 0)")
-    # mRes = dbCustomQuery(dbConnection, "Select count(*) from MoviesTb")
     # dbDELETE(dbConnection, "MoviesTb", "id != -1")
-    # mRes = dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])
-    mRes = dbSELECT(dbConnection, "MoviesTb")
+    # mRes = dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])    
+    mRes = dbGetColumnNames(dbConnection, "MoviesTb")
     for row in mRes:
         print(row)
     dbCloseConnection(dbConnection)    
@@ -156,41 +159,71 @@ def main():
 # Main function which called when user add argument. It is the main algorithm to manipulate the base
 def manualMain():
     
+    # After secure that script runned with argument, we save it on a variable
     calledMode = sys.argv[1]
     defaultChoises = ["SELECT", "DELETE", "UPDATE", "INSERT", "CUSTOM"]
     
-    if calledMode == "db":
+    # Open the connection with db
+    dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(dbForTestingPath)))
     
-        print("Please select the number of on the following mode:")
-        print("(1) SELECT on a specific table")
-        print("(2) DELETE rows on a specific table")
-        print("(3) UPDATE rows on a specific table")
-        print("(4) INSERT rows on a specific table")
-        print("(5) Custom query on a specif table")
-        print("If you want to exit from program just insert 'exit'.\n")
+    if calledMode == "db":    
+        mTrig = False
 
-        userInputTrig = True
-        while userInputTrig:
+        while True:
+            
+            print("\n\n______________________________________________")
+            print("Please select the number of on the following mode:")
+            print("(1) SELECT on a specific table")
+            print("(2) DELETE rows on a specific table")
+            print("(3) UPDATE rows on a specific table")
+            print("(4) INSERT rows on a specific table")
+            print("(5) Custom query on a specif table")
+            print("If you want to exit from program just insert 'exit'.\n")
+            
             userEntered = input()
+            print("\n")
             try:                
                 if userEntered.lower() == "exit":
                     return
+                elif int(userEntered)-1 == 4: 
+                    # Here is the custom query because it doesn't need to choose on which table you want to work                                        
+                    remoteCustomQuery(dbConnection)                    
+                    mTrig = True                                    
                 elif int(userEntered)-1 < len(defaultChoises) and int(userEntered)-1 >= 0:
-                    remoteMode(defaultChoises[int(userEntered)-1])
-                    userInputTrig = False            
+                    remoteMode(dbConnection, defaultChoises[int(userEntered)-1])        
+                    mTrig = True
                 else:
                     print("Your write a invalid command. Please try again !") 
+                
+                # Triger to ask user if he want to continue on making queries
+                if mTrig:
+                    
+                    while mTrig:                         
+                        print("\nDo you want to execute another one command ? (Y/N):", end="")
+                        userContinueInput = input()
+                        
+                        if userContinueInput.lower() == 'n':
+                            return 
+                        elif userContinueInput.lower() == 'y':
+                            mTrig = False
+                            print("Continue using app.")
+                        else: 
+                            print("Invalid command. Please try again !")
+
             except ValueError:
                 print("Your write a invalid command. Please try again !") 
     else:
-        print("Wrong argument. The only argument at this point is 'db' !")                            
+        print("Wrong argument. The only argument at this point is 'db' !")
+
+    # Close the db connection before exit the code
+    dbCloseConnection(dbConnection)            
 
 # Functionality of manual manipulation of base
-def remoteMode(mMode):
+def remoteMode(mConnection, mMode):
+
     print("Please choose on which table you want to work:")
     
-    dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(dbForTestingPath)))
-    cursor = dbConnection.cursor()
+    cursor = mConnection.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     
     # Create a dictionary with table to use it later for user choice
@@ -200,16 +233,18 @@ def remoteMode(mMode):
         # Get table's name
         dictionaryWithTables[i] = mTables[0]       
         print("("+str(i+1)+") " + dictionaryWithTables[i])
+
     print("If you want to exit from program just insert 'exit'.\n")
     
     modeTrig = True
     while modeTrig:
         userInput = input()
+        print("\n")
         try:            
             if userInput.lower() == "exit":
                 return
             elif int(userInput)-1 in dictionaryWithTables.keys():
-                executeUserChoise(dbConnection, mMode, dictionaryWithTables[int(userInput)-1])
+                executeUserChoise(mConnection, mMode, dictionaryWithTables[int(userInput)-1])
                 modeTrig = False
             else:
                 print("No valid choice. Please try again !")    
@@ -220,20 +255,46 @@ def remoteMode(mMode):
 
 # After taking connection, user table choise and mode, we execute the command
 def executeUserChoise(mConnection, mMode, mTable):
-    ''' YOU NEED TO ADD THE FUNCTIONS HERE '''
+    
     if mMode == "SELECT":
-        print(mMode)
+        print("...Done")
+        # dbSELECT(mConnection, mTable, fieldsToReturn, whereStatementText)
     elif mMode == "DELETE":
-        print(mMode)
-    elif mMode == "UPDATE":
-        print(mMode)
-    elif mMode == "INSERT":
-        print(mMode)
-    elif mMode == "CUSTOM":
-        print(mMode)
+        whereStatementText = remoteAskUserForInput("Please provide a valid WHERE statement (without write the word 'WHERE' ! )")        
+        dbDELETE(mConnection, mTable, whereStatementText)
+        print("...Done")
+    elif mMode == "UPDATE":        
+        print("...Done")
+        # dbUPDATE(mConnection, mTable, fieldsList, valueList, whereStatementText)
+    elif mMode == "INSERT":        
+        print("...Done")
+        # dbINSERT(mConnection, mTable, fieldsList, valueList)    
     else:
         print("Something went wrong")
 
+# A simple function that ask from user to write sql to send it to sqlite3 to execute SQL query
+def remoteCustomQuery(mConnection):
+    userQuery = remoteAskUserForInput("\nPlease write a SQL query and then press 'ENTER'. \n")
+    mRes = dbCustomQuery(mConnection, userQuery)
+    if mRes:
+        for row in mRes:
+            print(row)
+
+# Ask from user to provide something to use it for remote-manual mode
+def remoteAskUserForInput(textForUser):
+    print(textForUser)
+    return input()    
+
+# Set Fields and values 
+def remoteSetFieldsValues(mConnection, mTable):
+    print("\nThe column names of '"+mTable+"' is: ")
+    mNames = dbGetColumnNames(mConnection, mTable)
+    for name in mNames:
+        print("- " + name)
+        print("Please write the fiels and the equal value. Do not use 'Enter' to seperate values. Use just ','.")
+
+    
+# Main function that script starts
 if __name__ == '__main__':
     
     # If user called script without argument execute the default main function
