@@ -149,8 +149,8 @@ def setValuesInQuery(mQuery, valueList, stringToAppendOnEnd, equalFields=None, i
 def main():
     """ We need to make openConnectionToDB to throw exception if it find an error to avoid any problem """
     dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(dbForTestingPath)))
-    tempFields = ["Title", "Notified"]
-    tempValues = ["ok 123", 0]
+    # tempFields = ["Title", "Notified"]
+    # tempValues = ["ok 123", 0]
     
     # dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)
     # dbUPDATE(dbConnection, "MoviesTb", tempFields, tempValues, "Notified = 0")
@@ -166,92 +166,90 @@ def main():
 def manualMain():
     
     # After secure that script runned with argument, we save it on a variable
-    calledMode = sys.argv[1]
+    pathToDb = sys.argv[1]
     defaultChoises = ["SELECT", "DELETE", "UPDATE", "INSERT", "CUSTOM"]
     
     # Open the connection with db
-    dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(dbForTestingPath)))
+    dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(pathToDb)))
     
-    if calledMode == "db":    
-        mTrig = False
+    mTrig = False
 
-        while True:
+    while True:
             
-            print("\n\n______________________________________________")
-            print("Please select the number of on the following mode:")
-            print("(1) SELECT on a specific table")
-            print("(2) DELETE rows on a specific table")
-            print("(3) UPDATE rows on a specific table")
-            print("(4) INSERT rows on a specific table")
-            print("(5) Custom query on a specif table")
-            print("(6) Just show all TABLE of db file")
-            print("(7) Just show all COLUMN Names of a specific table in db")
-            print("If you want to exit from program just insert 'exit'.\n")
-            
-            userEntered = input()
-            print("\n")
-            try:                
-                if userEntered.lower() == "exit":
-                    return
-                # User select to create a CUSTOM query
-                elif int(userEntered)-1 == 4: 
-                    # Here is the custom query because it doesn't need to choose on which table you want to work                                        
-                    remoteCustomQuery(dbConnection)                    
-                    mTrig = True
-                # User select to him the TABLES of db
-                elif int(userEntered)-1 == 5:                     
-                    remoteShowTablesAndReturnThem(dbConnection, "*")
-                    mTrig = True
-                # User select to show him all the COLUMN names of a specific table
-                elif int(userEntered)-1 == 6: 
-                    print("Please choose the number of table you want to learn its column names.")
-                    ductionaryWithTables = remoteShowTablesAndReturnThem(dbConnection)       
-                    print("If you want to exit from program just insert 'exit'.\n")
+        print("\n\n______________________________________________")
+        print("Please select the number of on the following mode:")
+        print("(1) SELECT on a specific table")
+        print("(2) DELETE rows on a specific table")
+        print("(3) UPDATE rows on a specific table")
+        print("(4) INSERT rows on a specific table")
+        print("(5) Custom query on a specif table")
+        print("(6) Just show all TABLE of db file")
+        print("(7) Just show all COLUMN Names of a specific table in db")
+        print("If you want to exit from program just insert 'exit'.\n")
+        
+        userEntered = input()
+        print("\n")
+        try:                
+            if userEntered.lower() == "exit":
+                return
+            # User select to create a CUSTOM query
+            elif int(userEntered)-1 == 4: 
+                # Here is the custom query because it doesn't need to choose on which table you want to work                                        
+                remoteCustomQuery(dbConnection)                    
+                mTrig = True
+            # User select to him the TABLES of db
+            elif int(userEntered)-1 == 5:                     
+                remoteShowTablesAndReturnThem(dbConnection, "*")
+                mTrig = True
+            # User select to show him all the COLUMN names of a specific table
+            elif int(userEntered)-1 == 6: 
+                print("Please choose the number of table you want to learn its column names.")
+                ductionaryWithTables = remoteShowTablesAndReturnThem(dbConnection)       
+                print("If you want to exit from program just insert 'exit'.\n")
 
-                    modeTrig = True
-                    while modeTrig:
-                        userInput = input()
-                        print("\n")
-                        try:            
-                            if userInput.lower() == "exit":
-                                return
-                            elif int(userInput)-1 in ductionaryWithTables.keys():
-                                tbNames = dbGetColumnNames(dbConnection, ductionaryWithTables[int(userInput)-1])
-                                for name in tbNames:
-                                    print(" - "+name)
-                                modeTrig = False
-                            else:
-                                print("No valid choice. Please try again !")    
-                        except TypeError:
-                            print("No valid choice. Please try again !")
-                        except ValueError:
-                            print("No valid choice. Please try again !")
-                    mTrig = True
-                elif int(userEntered)-1 < len(defaultChoises) and int(userEntered)-1 >= 0:
-                    remoteMode(dbConnection, defaultChoises[int(userEntered)-1])        
-                    mTrig = True
-                else:
-                    print("Your write a invalid command. Please try again !") 
-                
-                # Triger to ask user if he want to continue on making queries
-                if mTrig:
-                    
-                    while mTrig:                         
-                        print("\nDo you want to execute another one command ? (Y/N):", end="")
-                        userContinueInput = input()
-                        
-                        if userContinueInput.lower() == 'n':
-                            return 
-                        elif userContinueInput.lower() == 'y':
-                            mTrig = False
-                            print("Continue using app.")
-                        else: 
-                            print("Invalid command. Please try again !")
-
-            except ValueError:
+                modeTrig = True
+                while modeTrig:
+                    userInput = input()
+                    print("\n")
+                    try:            
+                        if userInput.lower() == "exit":
+                            return
+                        elif int(userInput)-1 in ductionaryWithTables.keys():
+                            tbNames = dbGetColumnNames(dbConnection, ductionaryWithTables[int(userInput)-1])
+                            for name in tbNames:
+                                print(" - "+name)
+                            modeTrig = False
+                        else:
+                            print("No valid choice. Please try again !")    
+                    except TypeError:
+                        print("No valid choice. Please try again !")
+                    except ValueError:
+                        print("No valid choice. Please try again !")
+                mTrig = True
+            elif int(userEntered)-1 < len(defaultChoises) and int(userEntered)-1 >= 0:
+                remoteMode(dbConnection, defaultChoises[int(userEntered)-1])        
+                mTrig = True
+            else:
                 print("Your write a invalid command. Please try again !") 
-    else:
-        print("Wrong argument. The only argument at this point is 'db' !")
+            
+            # Triger to ask user if he want to continue on making queries
+            if mTrig:
+                
+                while mTrig:                         
+                    print("\nDo you want to execute another one command ? (Y/N):", end="")
+                    userContinueInput = input()
+                    
+                    if userContinueInput.lower() == 'n':
+                        return 
+                    elif userContinueInput.lower() == 'y':
+                        mTrig = False
+                        print("Continue using app.")
+                    else: 
+                        print("Invalid command. Please try again !")
+
+        except ValueError:
+            print("Your write a invalid command. Please try again !") 
+    
 
     # Close the db connection before exit the code
     dbCloseConnection(dbConnection)            
@@ -311,10 +309,16 @@ def remoteAskUserForInput(textForUser):
 # Set Fields and values 
 def remoteSetFieldsValues(mConnection, mTable, mMode):    
     print("\nUse some of the following columns to create the " + mMode + " query in " + mTable+ " table:")
-    names = dbGetColumnNames(mConnection)
+    names = dbGetColumnNames(mConnection, mTable)
     for name in names:
         print(name, end = " ")
-        print("...Done")
+
+    # tempListWithColumns = []
+    columnTrig = True
+    while columnTrig:
+         print("Please insert one column name. After you write a column name press the button 'Enter'. If you finish with the demanded column names please write '-' and press 'Enter'.: ", end=" ")
+        #  userInput = input()
+    print("...Done")
         # dbSELECT(mConnection, mTable, fieldsToReturn, whereStatementText)
         # dbUPDATE(mConnection, mTable, fieldsList, valueList, whereStatementText)
         # dbINSERT(mConnection, mTable, fieldsList, valueList)    
@@ -339,5 +343,7 @@ if __name__ == '__main__':
     # If user called script without argument execute the default main function
     if len(sys.argv) == 1:
         main()
-    else:
-        manualMain()        
+    elif len(sys.argv) == 2:
+        manualMain()       
+    else: 
+        print("You should add only one argument and that is the path of db to manipulate db")
