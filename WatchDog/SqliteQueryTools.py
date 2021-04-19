@@ -1,5 +1,6 @@
 import sqlite3, sys
 from sqlite3 import Error
+from types import MethodDescriptorType
 from typing import Type
 import watchDogUtilities as ut
 
@@ -66,10 +67,11 @@ def dbUPDATE(dbConnection, tableName, fieldsList, valueList, whereStatementText)
 
 def dbDELETE(dbConnection, tableName, whereStatementText):
     
-    if not whereStatementText or whereStatementText == '':
-        raise Exception("WHERE statement in query is either 'None' either empty")
-    
-    sql = "DELETE FROM " + tableName + " WHERE " + whereStatementText
+    if whereStatementText == '':
+        sql = "DELETE FROM " + tableName
+    else:
+        sql = "DELETE FROM " + tableName + " WHERE " + whereStatementText
+
     executeQuery(dbConnection, sql)
 
 # Function to execute a custom query user gave.
@@ -148,16 +150,10 @@ def setValuesInQuery(mQuery, valueList, stringToAppendOnEnd, equalFields=None, i
 # I basically create it to test function of the class 
 def main():
     """ We need to make openConnectionToDB to throw exception if it find an error to avoid any problem """
-    dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(dbForTestingPath)))
-    # tempFields = ["Title", "Notified"]
-    # tempValues = ["ok 123", 0]
-    
-    # dbINSERT(dbConnection, "MoviesTb", tempFields, tempValues)
-    # dbUPDATE(dbConnection, "MoviesTb", tempFields, tempValues, "Notified = 0")
-    # dbCustomQuery(dbConnection, "INSERT INTO MoviesTb (Title, Grade, Notified) VALUES('Darksiders', 6, 0)")
-    # dbDELETE(dbConnection, "MoviesTb", "id != -1")
-    # mRes = dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])    
-    mRes = dbGetColumnNames(dbConnection, "MoviesTb")
+    dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(dbForTestingPath)))    
+    # dbCustomQuery(dbConnection, "INSERT INTO MoviesTb (Title, Grade, Notified) VALUES('Darksiders', 6, 0)")    
+    mRes = dbSELECT(dbConnection, "MoviesTb", fieldsToReturn=['title', 'id'])    
+    # mRes = dbGetColumnNames(dbConnection, "MoviesTb")
     for row in mRes:
         print(row)
     dbCloseConnection(dbConnection)    
@@ -167,11 +163,9 @@ def manualMain():
     
     # After secure that script runned with argument, we save it on a variable
     pathToDb = sys.argv[1]
-    defaultChoises = ["SELECT", "DELETE", "UPDATE", "INSERT", "CUSTOM"]
-    
+    defaultChoises = ["SELECT", "DELETE", "UPDATE", "INSERT", "CUSTOM"]    
     # Open the connection with db
-    dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(pathToDb)))
-    
+    dbConnection = dbOpenConnection(ut.checkOSSystem(ut.findParentPath(pathToDb)))    
     mTrig = False
 
     while True:
@@ -191,7 +185,7 @@ def manualMain():
         print("\n")
         try:                
             if userEntered.lower() == "exit":
-                return
+                remoteClose(dbConnection)
             # User select to create a CUSTOM query
             elif int(userEntered)-1 == 4: 
                 # Here is the custom query because it doesn't need to choose on which table you want to work                                        
@@ -213,7 +207,7 @@ def manualMain():
                     print("\n")
                     try:            
                         if userInput.lower() == "exit":
-                            return
+                            remoteClose(dbConnection)
                         elif int(userInput)-1 in ductionaryWithTables.keys():
                             tbNames = dbGetColumnNames(dbConnection, ductionaryWithTables[int(userInput)-1])
                             for name in tbNames:
@@ -240,7 +234,7 @@ def manualMain():
                     userContinueInput = input()
                     
                     if userContinueInput.lower() == 'n':
-                        return 
+                        remoteClose(dbConnection) 
                     elif userContinueInput.lower() == 'y':
                         mTrig = False
                         print("Continue using app.")
@@ -250,10 +244,6 @@ def manualMain():
         except ValueError:
             print("Your write a invalid command. Please try again !") 
     
-
-    # Close the db connection before exit the code
-    dbCloseConnection(dbConnection)            
-
 # Functionality of manual manipulation of base
 def remoteMode(mConnection, mMode):
     
@@ -273,11 +263,11 @@ def remoteMode(mConnection, mMode):
                 executeUserChoise(mConnection, mMode, dictionaryWithTables[int(userInput)-1])
                 modeTrig = False
             else:
-                print("No valid choice. Please try again !")    
+                print("No valid choice. Please try again 1!")    
         except TypeError:
-            print("No valid choice. Please try again !")
+            print("No valid choice. Please try again 2!")
         except ValueError:
-            print("No valid choice. Please try again !")
+            print("No valid choice. Please try again 3!")
 
     
 # After taking connection, user table choise and mode, we execute the command
@@ -306,6 +296,12 @@ def remoteAskUserForInput(textForUser):
     print(textForUser)
     return input()    
 
+# Function to close smoothly app and db
+def remoteClose(mConnection):
+    # Close the db connection before exit the code
+    dbCloseConnection(mConnection)
+    sys.exit(66) 
+
 # Set Fields and values 
 def remoteSetFieldsValues(mConnection, mTable, mMode):    
     print("\nUse some of the following columns to create the " + mMode + " query in " + mTable+ " table:")
@@ -313,15 +309,65 @@ def remoteSetFieldsValues(mConnection, mTable, mMode):
     for name in names:
         print(name, end = " ")
 
-    # tempListWithColumns = []
+    tempListWithColumns = []
+    tempListWithColumnsValue = []
     columnTrig = True
+    print('''\n\nPlease insert only ONE name of column and press the button 'Enter'.\nYou can repeat this step to implement as many column you want.
+    \nIf you want to add all fields just write '*' (works only for SELECT). \nTo end this procedure just write '-' and press 'Enter'. ''')         
     while columnTrig:
-         print("Please insert one column name. After you write a column name press the button 'Enter'. If you finish with the demanded column names please write '-' and press 'Enter'.: ", end=" ")
-        #  userInput = input()
-    print("...Done")
-        # dbSELECT(mConnection, mTable, fieldsToReturn, whereStatementText)
-        # dbUPDATE(mConnection, mTable, fieldsList, valueList, whereStatementText)
-        # dbINSERT(mConnection, mTable, fieldsList, valueList)    
+        userInput = input()
+        if userInput == '*' or userInput == '-':
+            columnTrig = False
+        else:
+            tempListWithColumns.append(userInput)
+    
+    # if true then it means that we need to *
+    if len(tempListWithColumns) == 0 and mMode == 'SELECT':        
+        
+        whereText = remoteAskUserForInput("Please write a valid WHERE statement (without adding the word 'where'). If you don't want to add 'where' statement just press 'Enter'.")
+        if whereText == "":
+            mRes = dbSELECT(mConnection, mTable)
+        else:
+            mRes = dbSELECT(mConnection, mTable, whereStatementText=whereText)
+        # Show results
+        for row in mRes:
+            print(row)
+        print("...Done")
+
+    elif len(tempListWithColumns) != 0:
+        
+        if mMode == 'SELECT':
+            whereText = remoteAskUserForInput("Please write a valid WHERE statement (without adding the word 'where'). If you don't want to add 'where' statement just press 'Enter'.")
+            if whereText == "":
+                mRes = dbSELECT(mConnection, mTable, tempListWithColumns)
+            else:
+                mRes = dbSELECT(mConnection, mTable, tempListWithColumns, whereText)
+            # Show results
+            for row in mRes:
+                print(row)            
+        else:
+            print("Please add to wanted value on each given field")
+            for col in tempListWithColumns:
+                print(col+"= ", end="")
+                mUserInput = input()
+                # Add values for each 
+                tempListWithColumnsValue.append(mUserInput)
+
+            if mMode == 'UPDATE':
+                
+                whereText = remoteAskUserForInput("Please write a valid WHERE statement (without adding the word 'where'). If you don't want to add 'where' statement just press 'Enter'.")
+                if whereText == "":
+                    dbUPDATE(mConnection, mTable, tempListWithColumns, tempListWithColumnsValue)
+                else:
+                    dbUPDATE(mConnection, mTable, tempListWithColumns, tempListWithColumnsValue, whereText)                
+
+            elif mMode == 'INSERT':
+                dbINSERT(mConnection, mTable, tempListWithColumns, tempListWithColumnsValue) 
+
+        print("...Done")    
+    else:
+        print("Something went wrong with adding column names. Please try again from the beginning")
+        remoteClose(mConnection)
 
 # Create a dict with tables name and it prints them.
 def remoteShowTablesAndReturnThem(mConnection, textPrefix=""):
@@ -336,10 +382,7 @@ def remoteShowTablesAndReturnThem(mConnection, textPrefix=""):
     return tempDict
     
 # Main function that script starts
-if __name__ == '__main__':
-    #TODO: Replace argument with db name
-    #TODO: Function to get column = value
-    '''Μπορώ να τα κάνω... βάλε όλα τα columns και μολις τα βάλεις ???? με την σειρά θα σου τα εμφανίζει εως πχ Title= και θα πρέπει να βάλεις τιμή'''
+if __name__ == '__main__':    
     # If user called script without argument execute the default main function
     if len(sys.argv) == 1:
         main()
