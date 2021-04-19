@@ -83,6 +83,12 @@ def dbGetColumnNames(dbConnection, mTable):
     mCursor = dbConnection.execute("SELECT * FROM " + mTable)
     return list(map(lambda x:x[0], mCursor.description))
 
+# Function that returns all the tables that db contains
+def dbGetTableOfDB(mConnection):
+    cursor = mConnection.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    return cursor.fetchall()
+
 # To avoid repeate the bellow code. It just execute the given sql query to base
 def executeQuery(mConnection, mSQL):
     mCursor = mConnection.cursor()
@@ -178,6 +184,8 @@ def manualMain():
             print("(3) UPDATE rows on a specific table")
             print("(4) INSERT rows on a specific table")
             print("(5) Custom query on a specif table")
+            print("(6) Just show all TABLE of db file")
+            print("(7) Just show all COLUMN Names of a specific table in db")
             print("If you want to exit from program just insert 'exit'.\n")
             
             userEntered = input()
@@ -185,10 +193,40 @@ def manualMain():
             try:                
                 if userEntered.lower() == "exit":
                     return
+                # User select to create a CUSTOM query
                 elif int(userEntered)-1 == 4: 
                     # Here is the custom query because it doesn't need to choose on which table you want to work                                        
                     remoteCustomQuery(dbConnection)                    
-                    mTrig = True                                    
+                    mTrig = True
+                # User select to him the TABLES of db
+                elif int(userEntered)-1 == 5:                     
+                    remoteShowTablesAndReturnThem(dbConnection, "*")
+                    mTrig = True
+                # User select to show him all the COLUMN names of a specific table
+                elif int(userEntered)-1 == 6: 
+                    print("Please choose the number of table you want to learn its column names.")
+                    ductionaryWithTables = remoteShowTablesAndReturnThem(dbConnection)       
+                    print("If you want to exit from program just insert 'exit'.\n")
+
+                    modeTrig = True
+                    while modeTrig:
+                        userInput = input()
+                        print("\n")
+                        try:            
+                            if userInput.lower() == "exit":
+                                return
+                            elif int(userInput)-1 in ductionaryWithTables.keys():
+                                tbNames = dbGetColumnNames(dbConnection, ductionaryWithTables[int(userInput)-1])
+                                for name in tbNames:
+                                    print(" - "+name)
+                                modeTrig = False
+                            else:
+                                print("No valid choice. Please try again !")    
+                        except TypeError:
+                            print("No valid choice. Please try again !")
+                        except ValueError:
+                            print("No valid choice. Please try again !")
+                    mTrig = True
                 elif int(userEntered)-1 < len(defaultChoises) and int(userEntered)-1 >= 0:
                     remoteMode(dbConnection, defaultChoises[int(userEntered)-1])        
                     mTrig = True
@@ -220,20 +258,10 @@ def manualMain():
 
 # Functionality of manual manipulation of base
 def remoteMode(mConnection, mMode):
-
+    
     print("Please choose on which table you want to work:")
-    
-    cursor = mConnection.cursor()
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    
     # Create a dictionary with table to use it later for user choice
-    dictionaryWithTables = {}
-
-    for i, mTables in enumerate(cursor.fetchall()):
-        # Get table's name
-        dictionaryWithTables[i] = mTables[0]       
-        print("("+str(i+1)+") " + dictionaryWithTables[i])
-
+    dictionaryWithTables = remoteShowTablesAndReturnThem(mConnection)
     print("If you want to exit from program just insert 'exit'.\n")
     
     modeTrig = True
@@ -253,22 +281,17 @@ def remoteMode(mConnection, mMode):
         except ValueError:
             print("No valid choice. Please try again !")
 
+    
 # After taking connection, user table choise and mode, we execute the command
 def executeUserChoise(mConnection, mMode, mTable):
     
-    if mMode == "SELECT":
-        print("...Done")
-        # dbSELECT(mConnection, mTable, fieldsToReturn, whereStatementText)
+    if mMode == "SELECT" or mMode == "UPDATE" or mMode == "INSERT":
+        remoteSetFieldsValues(mConnection, mTable, mMode)
+        print("...Done")                    
     elif mMode == "DELETE":
         whereStatementText = remoteAskUserForInput("Please provide a valid WHERE statement (without write the word 'WHERE' ! )")        
         dbDELETE(mConnection, mTable, whereStatementText)
         print("...Done")
-    elif mMode == "UPDATE":        
-        print("...Done")
-        # dbUPDATE(mConnection, mTable, fieldsList, valueList, whereStatementText)
-    elif mMode == "INSERT":        
-        print("...Done")
-        # dbINSERT(mConnection, mTable, fieldsList, valueList)    
     else:
         print("Something went wrong")
 
@@ -286,17 +309,33 @@ def remoteAskUserForInput(textForUser):
     return input()    
 
 # Set Fields and values 
-def remoteSetFieldsValues(mConnection, mTable):
-    print("\nThe column names of '"+mTable+"' is: ")
-    mNames = dbGetColumnNames(mConnection, mTable)
-    for name in mNames:
-        print("- " + name)
-        print("Please write the fiels and the equal value. Do not use 'Enter' to seperate values. Use just ','.")
+def remoteSetFieldsValues(mConnection, mTable, mMode):    
+    print("\nUse some of the following columns to create the " + mMode + " query in " + mTable+ " table:")
+    names = dbGetColumnNames(mConnection)
+    for name in names:
+        print(name, end = " ")
+        print("...Done")
+        # dbSELECT(mConnection, mTable, fieldsToReturn, whereStatementText)
+        # dbUPDATE(mConnection, mTable, fieldsList, valueList, whereStatementText)
+        # dbINSERT(mConnection, mTable, fieldsList, valueList)    
 
+# Create a dict with tables name and it prints them.
+def remoteShowTablesAndReturnThem(mConnection, textPrefix=""):
+    tempDict = {}                    
+    for i, mTables in enumerate(dbGetTableOfDB(mConnection)):
+        # Get table's name
+        tempDict[i] = mTables[0]
+        if textPrefix == "":
+            print("("+str(i+1)+") " + mTables[0])
+        else:
+            print(textPrefix + " " + mTables[0])
+    return tempDict
     
 # Main function that script starts
 if __name__ == '__main__':
-    
+    #TODO: Replace argument with db name
+    #TODO: Function to get column = value
+    '''Μπορώ να τα κάνω... βάλε όλα τα columns και μολις τα βάλεις ???? με την σειρά θα σου τα εμφανίζει εως πχ Title= και θα πρέπει να βάλεις τιμή'''
     # If user called script without argument execute the default main function
     if len(sys.argv) == 1:
         main()
