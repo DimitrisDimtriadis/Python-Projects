@@ -1,0 +1,35 @@
+_________________________________
+^^^Info about Tools files^^^
+_________________________________
+
+	
+	&& EmailSendTool.py &&
+_________________________________
+
+- (no arguments) 
+It works with the classic way. 
+The program search on 'flatFilesUtil/data.csv' path for the email file and on 'flatFilesUtil/message.txt' path for the message file. 
+If the file with source/target emails doesn't exist the program asks from user to enter it.
+If the file with the message doesn't exist the app stops working.
+
+-(argument_1='Path for source/target emails csv file' || argument_2='Path for message txt file')
+It works same with previous one, but it doesn't asks from user to write anything. If program doesn't find any file, it raise an exception.
+Before do anything script check that paths for files are valid. If they don't an exception will raise
+
+
+	&& SqliteQueryTools.py &&
+_________________________________
+
+! The functions help other scripts to manipulate the database !
+
+- (no arguments) 
+It works with the current given command. The most times it will excecute a SELECT query on a specific db table.
+
+-(argument_1='Path for .sqlite file you want to interact')
+It contains a full remote control to manual manipulate a specific database. Just follow the instructions that app give
+
+
+	&& OSUtilities.py &&
+_________________________________
+
+! The functions help on issues like validate path or file existance. Just support other classes !

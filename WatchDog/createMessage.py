@@ -54,8 +54,9 @@ def updateDBThatUserReceiveTheInfo():
 
 if __name__=="__main__":
 
+    # TODO: Fix argument issue. You must give the name of table and to check if it is update or not
     # Check if script call with input
-    if len(sys.argv) > 1 and sys.argv[1] == "update":
+    if len(sys.argv) == 2 and sys.argv[1] == "update":
         # Update data on base
         updateDBThatUserReceiveTheInfo()
         print("!!! Mark them as read !!!")    
