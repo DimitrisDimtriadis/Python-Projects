@@ -36,7 +36,16 @@ Classes with the models we need on scripts
 It's a python file that contains all functions needed to manipulate SQLite database.
 
 --createMessage.py
-This script BASED ON input argument either fetch all the data we want to send through an email, either mark all unread rows as sended to avoid sending any duplication of data
+This script BASED ON input argument either fetch all the data we want to send through an email, either mark all unread rows as sended to avoid sending any duplication of data. The project on which will make the changes
+depend on the arguments user will impliment.
+The script works only with this arguments:
+	- 'tableName'
+    - 'tableName' update
+    - 'tableName' 'pathForMessage'
+    - 'tableName' 'pathForMessage' update
+    - 'tableName' 'pathForMessage' 'pathForDb'
+    - 'tableName' 'pathForMessage' 'pathForDb' update
+
 
 
 	&& Bash Shell Scripts &&	

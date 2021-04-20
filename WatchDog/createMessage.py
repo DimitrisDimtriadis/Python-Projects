@@ -1,3 +1,4 @@
+from os import path
 import sqlite3, sys
 import SqliteQueryTools as sqlT
 import watchDogUtilities as ut
@@ -7,15 +8,20 @@ import CustomeModels as cModels
 nameOfEmailMessage = "flatFilesUtil/message.txt"
 dbPath = ut.findParentPath("DBUtil/watchDogDB.sqlite")
 
-def createMessageToSendWithEmail():
+def createMessageToSendWithEmail(mTableName, pathForMessageFile='', pathForDatabase=''):
     # Create the whole path for message.txt and watchDog.sqlite files
-    messagePath = ut.findParentPath(nameOfEmailMessage)    
-
+    if pathForMessageFile != '':
+        messagePath = pathForMessageFile
+    else:        
+        messagePath = ut.findParentPath(nameOfEmailMessage)    
     # Create db Connection
-    dbConnection = sqlT.dbOpenConnection(dbPath)
+    if pathForDatabase != '':
+        dbConnection = sqlT.dbOpenConnection(str(pathForDatabase))
+    else:
+        dbConnection = sqlT.dbOpenConnection(dbPath)
 
     # Fetch all wanted data from base
-    moviesList = sqlT.dbSELECT(dbConnection, "MoviesTb", whereStatementText="Notified = 1")
+    moviesList = sqlT.dbSELECT(dbConnection, mTableName, whereStatementText="Notified = 1")
 
     # If it doen't contain any data to send EXIT with this code to notify bash script
     if len(moviesList) == 0:
@@ -32,35 +38,69 @@ def createMessageToSendWithEmail():
         msgFile.write("1 new movie ! \n")
 
     for row in moviesList:
+        # Create a Movie Model to manipulate easier the data
         tempMovieObj = cModels.Movie(row["ID"], row['Title'], row['Grade'], row['ImageUrl'], row['Notified'], row['EntryDate'], row['ModifyDate'])
-
-        #Add on message.txt file a new line with info for this movie
+        # Add on message.txt file a new line with info for this movie
         msgFile.write("* Name: " + tempMovieObj.title + " || " + str(tempMovieObj.grade) + " \n " + tempMovieObj.imgURL + "\n\n" )
     
     # Close db connection
     sqlT.dbCloseConnection(dbConnection)
 
 # When append all movies to message.txt then we need to mark them as readed
-def updateDBThatUserReceiveTheInfo():
+def updateDBThatUserReceiveTheInfo(mTableName, pathForDatabase=''):
 
     # Open Connection with db
-    dbConnection = sqlT.dbOpenConnection(dbPath)
+    if pathForDatabase != '':
+        dbConnection = sqlT.dbOpenConnection(pathForDatabase)
+    else:
+        dbConnection = sqlT.dbOpenConnection(dbPath)
         
     # Mark entries ass seen
-    sqlT.dbUPDATE(dbConnection, "MoviesTb", ['Notified'], [0], "Notified = 1")
+    sqlT.dbUPDATE(dbConnection, mTableName, ['Notified'], [0], "Notified = 1")
 
     #Close the connection
     sqlT.dbCloseConnection(dbConnection)
 
-if __name__=="__main__":
-
-    # TODO: Fix argument issue. You must give the name of table and to check if it is update or not
-    # Check if script call with input
-    if len(sys.argv) == 2 and sys.argv[1] == "update":
-        # Update data on base
-        updateDBThatUserReceiveTheInfo()
-        print("!!! Mark them as read !!!")    
+# Function that finds which function need to be call for the right project based on table's name
+def decideActiveProjectBasedOnTable(mTableName, itsUpdate, pathForMsg="", pathForDB=""):
+    # For Movies Watch Dog project
+    if mTableName.lower() == 'moviestb':
+        if itsUpdate:
+            # Update data on base
+            updateDBThatUserReceiveTheInfo('MoviesTb', pathForDB)
+        else:
+            # Just create the message to send
+            createMessageToSendWithEmail('MoviesTb', pathForMessageFile=pathForMsg, pathForDatabase=pathForDB)
     else:
-        # Just create the message to send
-        createMessageToSendWithEmail()
-        print("!!! Create message !!!")    
+        print('Wrong table name. Please try again !')
+        
+
+# Main part of script. Decide what user need the script do
+if __name__=="__main__":
+    # Check if script call with input
+    # 1) tableName
+    if len(sys.argv) == 2:
+        decideActiveProjectBasedOnTable(sys.argv[1], False)
+    # 2) tableName update
+    elif len(sys.argv) == 3 and sys.argv[2] == 'update':
+        print("2")
+        decideActiveProjectBasedOnTable(sys.argv[1], True)
+    # 3) tableName pathForMessage
+    elif len(sys.argv) == 3:
+        usersPathForMsg = ut.checkOSSystem(sys.argv[2])
+        print(usersPathForMsg)
+        decideActiveProjectBasedOnTable(sys.argv[1], False, usersPathForMsg)
+    # 4) tableName pathForDb update
+    elif len(sys.argv) == 4 and sys.argv[3] == 'update':
+        print("4")
+        if ut.checkIfFileExists(ut.checkOSSystem(sys.argv[2])):
+            usersPathForDB = ut.checkOSSystem(sys.argv[2])
+        decideActiveProjectBasedOnTable(sys.argv[1], True, pathForDB=usersPathForDB)
+    # 5) tableName pathForMessage pathForDb
+    elif len(sys.argv) == 4:
+        usersPathForMsg = ut.checkOSSystem(sys.argv[2])
+        if ut.checkIfFileExists(ut.checkOSSystem(sys.argv[3])):
+            usersPathForDB = ut.checkOSSystem(sys.argv[3])
+        decideActiveProjectBasedOnTable(sys.argv[1], False, pathForMsg=usersPathForMsg, pathForDB=usersPathForDB)
+    else:
+        print("Something went wrong with the arguments. Please visit the WatchDogTutorial.txt for more informations")
