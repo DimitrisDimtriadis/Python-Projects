@@ -1,8 +1,6 @@
 # SqliteQueryTools version 1.0
 import sqlite3, sys
 from sqlite3 import Error
-from types import MethodDescriptorType
-from typing import Type
 import watchDogUtilities as ut
 
 dbForTestingPath = "DBUtil\watchDogDB.sqlite"
@@ -317,7 +315,6 @@ def remoteSetFieldsValues(mConnection, mTable, mMode):
         if userInput == '*' or userInput == '-':
             columnTrig = False
         elif userInput != "":
-            print(userInput)
             tempListWithColumns.append(str(userInput))
         else:
             print("Invalid argument. Try again")
@@ -385,6 +382,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         main()
     elif len(sys.argv) == 2:
+        ut.checkIfFileExists(sys.argv[1])
         manualMain()       
     else: 
         print("You should add only one argument and that is the path of db to manipulate db")

@@ -2,7 +2,7 @@
 import smtplib
 import pandas
 import os, re, sys
-import watchDogUtilities as ut
+import OSUtilities as ut
 
 rowHeaders = ['Email', 'password', 'SourceMail', 'host']
 basePath = 'flatFilesUtil/data.csv'
