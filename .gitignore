@@ -6,3 +6,4 @@ env/
 *.pyc
 *.sqlite
 WatchDog/DBUtil/watchDogDB.sqlite
+WatchDog/testScript.sh

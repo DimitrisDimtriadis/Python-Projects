@@ -8,7 +8,7 @@ nameOfCreateMessage=$parentFilePath"/createMessage.py"
 nameOfDirForSourceFiles=$parentFilePath"/flatFilesUtil"
 
 #Movies WathcDog
-pathForSourceFilesMV=nameOfDirForSourceFiles=$parentFilePath"/flatFilesUtil/MoviesProject"
+pathForSourceFilesMV=$parentFilePath"/flatFilesUtil/MoviesProject"
 pathForMessageMv=$parentFilePath"/flatFilesUtil/MoviesProject/message.txt"
 pathForEmailAddrMv=$parentFilePath"/flatFilesUtil/MoviesProject/emailAddresses.csv"
 pathForDBMv=$parentFilePath"/DBUtil/watchDogDB.sqlite"
@@ -40,14 +40,21 @@ runSpecificPyFile(){
 	return $runPyCommandStatus
 }
 
+#If given dir doesn't exit script crash without any info. So this function will create the path/dir we need
+checkAndCreateDirIfNeed(){
+	if [ ! -d $1 ]
+	then
+		#If dir doesn't exit, create one
+		mkdir $1
+	fi
+}
+
 echo "Procedure started..."
 
-#If flatFilesUtil dir doesn't exit script crash without any info.
-if [ ! -d $nameOfDirForSourceFiles ]
-then
-	#If dir doesn't exit, create one
-	mkdir $nameOfDirForSourceFiles
-fi
+#Check the necessary paths
+checkAndCreateDirIfNeed $nameOfDirForSourceFiles
+checkAndCreateDirIfNeed $pathForSourceFilesMV
+
 
 #Run movieWatchDog
 runSpecificPyFile $nameOfWatchDog
