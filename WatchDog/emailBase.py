@@ -54,7 +54,7 @@ def main(pathForEmailFile='', pathForMessageFile=''):
     
     # Set var for base path to check it later
     if not manualModeOn:
-        emailsBasePath = ut.findParentPath(pathForEmailFile)
+        emailsBasePath = pathForEmailFile
     else:
         emailsBasePath = ut.findParentPath(basePath)
 
@@ -108,7 +108,7 @@ def main(pathForEmailFile='', pathForMessageFile=''):
 
     # Save path of message.txt (if exist) to set the title and the message of email
     if not manualModeOn:
-        pathOfMessageFile = checkIfMessageToSendExist(pathForMessageFile)
+        pathOfMessageFile = pathForMessageFile
     else:
         pathOfMessageFile = checkIfMessageToSendExist(messagePath)
 

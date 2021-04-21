@@ -42,7 +42,7 @@ The script works only with this arguments:
 	- 'tableName'
     - 'tableName' update
     - 'tableName' 'pathForMessage'
-    - 'tableName' 'pathForMessage' update
+    - 'tableName' 'pathForDb' update
     - 'tableName' 'pathForMessage' 'pathForDb'
     - 'tableName' 'pathForMessage' 'pathForDb' update
 

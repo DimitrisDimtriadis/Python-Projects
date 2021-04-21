@@ -1,33 +1,38 @@
 #!/usr/bin/env bash
-
-#Name of files used to specify the path to run the commands
-nameOfWatchDog="/movieWatchDog.py"
-nameOfEmailBase="/emailBase.py"
-nameOfCreateMessage="/createMessage.py"
-nameOfDirForSourceFiles="/flatFilesUtil"
 #The path where script exist
 parentFilePath=$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+#Name of files used to specify the path to run the commands
+nameOfWatchDog=$parentFilePath"/movieWatchDog.py"
+nameOfEmailBase=$parentFilePath"/emailBase.py"
+nameOfCreateMessage=$parentFilePath"/createMessage.py"
+nameOfDirForSourceFiles=$parentFilePath"/flatFilesUtil"
+
+#Movies WathcDog
+pathForSourceFilesMV=nameOfDirForSourceFiles=$parentFilePath"/flatFilesUtil/MoviesProject"
+pathForMessageMv=$parentFilePath"/flatFilesUtil/MoviesProject/message.txt"
+pathForEmailAddrMv=$parentFilePath"/flatFilesUtil/MoviesProject/emailAddresses.csv"
+pathForDBMv=$parentFilePath"/DBUtil/watchDogDB.sqlite"
 
 #Function to get the status from last command excecuted
 checkStatus(){
 	if [ $1 != '0' ] && [ $1 != '33' ] 
 	then
 		echo "There was a problem with $2 script."
-		echo "Please fix it before precedure"
+		echo "Please fix it before proceed"
 	fi
 }
 #Function that used to run specific .py files with python3. It return the status of excecution
 runSpecificPyFile(){
 	#Get the path of bash shell script. We append the input argument to set the right path
-	filePath=$parentFilePath$1	
-	if [ $# -le 1 ]
-	then
-		#Execute the script to access site and get the info we want
-		python3 $filePath
-	else
-		#Execute the script to access site and get the info we want
-		python3 $filePath $2
-	fi
+	
+	numberOfArg=$#
+	mainProgram="python3"
+	for mNum in $(seq 1 $numberOfArg)
+	do
+		mainProgram="${mainProgram} \$$mNum"
+	done
+	eval $mainProgram
+	
 	#Save on var the exit status
 	runPyCommandStatus=$?
 	#Call the function to check if status was not 0, to notify user
@@ -38,10 +43,10 @@ runSpecificPyFile(){
 echo "Procedure started..."
 
 #If flatFilesUtil dir doesn't exit script crash without any info.
-if [ ! -d $parentFilePath$nameOfDirForSourceFiles ]
+if [ ! -d $nameOfDirForSourceFiles ]
 then
 	#If dir doesn't exit, create one
-	mkdir $parentFilePath$nameOfDirForSourceFiles
+	mkdir $nameOfDirForSourceFiles
 fi
 
 #Run movieWatchDog
@@ -53,20 +58,21 @@ watchDogStatus=$?
 if [ $watchDogStatus == '0' ]
 then
 	#Run createMessage
-	runSpecificPyFile $nameOfCreateMessage
+	runSpecificPyFile $nameOfCreateMessage MoviesTb $pathForMessageMv
 	#Get status of previous execution
+	
 	createMessageStatus=$?
 
 	if [ $createMessageStatus == '0' ]
 	then
 		#Run emailBase
-		runSpecificPyFile $nameOfEmailBase
+		runSpecificPyFile $nameOfEmailBase $pathForEmailAddrMv $pathForMessageMv
 		#Get status of previous execution
 		emailBaseStatus=$?
 		
 		if [ $emailBaseStatus == '0' ]
-		then
-			runSpecificPyFile $nameOfCreateMessage "update"
+		then			
+			runSpecificPyFile $nameOfCreateMessage MoviesTb $pathForDBMv update
 		fi
 
 	elif [ $createMessageStatus == '33' ]

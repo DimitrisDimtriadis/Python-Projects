@@ -50,7 +50,7 @@ def dbINSERT(dbConnection, tableName, fieldsList, valueList):
     executeQuery(dbConnection, sql)
 
 # Function we need to execute UPDATE command to given connection (DB)
-def dbUPDATE(dbConnection, tableName, fieldsList, valueList, whereStatementText):
+def dbUPDATE(dbConnection, tableName, fieldsList, valueList, whereStatementText=''):
 
     if len(fieldsList) != len(valueList):
         raise Exception("Number of fields differ from values")
@@ -260,8 +260,8 @@ def remoteMode(mConnection, mMode):
                 modeTrig = False
             else:
                 print("No valid choice. Please try again! 1")    
-        except TypeError:
-            print("No valid choice. Please try again! 2")
+        # except TypeError:
+        #     print("No valid choice. Please try again! 2")
         except ValueError:
             print("No valid choice. Please try again! 3")
 
@@ -309,29 +309,21 @@ def remoteSetFieldsValues(mConnection, mTable, mMode):
     tempListWithColumnsValue = []
     columnTrig = True
     print('''\nPlease insert only ONE name of column and press the button 'Enter'.\nYou can repeat this step to implement as many column you want.
-    \nIf you want to add all fields just write '*' (works only for SELECT). \nTo end this procedure just write '-' and press 'Enter'. ''')         
+    \nIf you want to add all fields just write '*' (works only for SELECT). \nTo end this procedure just press 'Enter'. ''')         
     while columnTrig:
         userInput = input()
-        if userInput == '*' or userInput == '-':
+        if userInput == '*':
+            # Add all the field name in values
+            tempListWithColumns.extend(names)
+            columnTrig = False
+        elif userInput == '':
             columnTrig = False
         elif userInput != "":
             tempListWithColumns.append(str(userInput))
         else:
             print("Invalid argument. Try again")
-    
-    # if true then it means that we need to *
-    if len(tempListWithColumns) == 0 and mMode == 'SELECT':        
-        
-        whereText = remoteAskUserForInput("Please write a valid WHERE statement (without adding the word 'where'). If you don't want to add 'where' statement just press 'Enter'.")
-        if whereText == "":
-            mRes = dbSELECT(mConnection, mTable)
-        else:
-            mRes = dbSELECT(mConnection, mTable, whereStatementText=whereText)
-        # Show results
-        for row in mRes:
-            print(row)
 
-    elif len(tempListWithColumns) != 0:
+    if len(tempListWithColumns) != 0:
         
         if mMode == 'SELECT':
             whereText = remoteAskUserForInput("Please write a valid WHERE statement (without adding the word 'where'). If you don't want to add 'where' statement just press 'Enter'.")
@@ -345,18 +337,18 @@ def remoteSetFieldsValues(mConnection, mTable, mMode):
         else:
             print("Please add to wanted value on each given field")
             for col in tempListWithColumns:
-                print(col+"= ", end="")
+                print(col+" = ", end="")
                 mUserInput = input()
                 # Add values for each 
                 tempListWithColumnsValue.append(str(mUserInput))
 
             if mMode == 'UPDATE':
                 
-                whereText = remoteAskUserForInput("Please write a valid WHERE statement (without adding the word 'where'). If you don't want to add 'where' statement just press 'Enter'.")                
-                if whereText == "":
+                tempWhereText = remoteAskUserForInput("Please write a valid WHERE statement (without adding the word 'where'). If you don't want to add 'where' statement just press 'Enter'.")                   
+                if tempWhereText == "":
                     dbUPDATE(mConnection, mTable, tempListWithColumns, tempListWithColumnsValue)
                 else:
-                    dbUPDATE(mConnection, mTable, tempListWithColumns, tempListWithColumnsValue, whereText)                
+                    dbUPDATE(mConnection, mTable, tempListWithColumns, tempListWithColumnsValue, tempWhereText)                
 
             elif mMode == 'INSERT':
                 dbINSERT(mConnection, mTable, tempListWithColumns, tempListWithColumnsValue) 

@@ -83,16 +83,14 @@ if __name__=="__main__":
         decideActiveProjectBasedOnTable(sys.argv[1], False)
     # 2) tableName update
     elif len(sys.argv) == 3 and sys.argv[2] == 'update':
-        print("2")
         decideActiveProjectBasedOnTable(sys.argv[1], True)
     # 3) tableName pathForMessage
     elif len(sys.argv) == 3:
-        usersPathForMsg = ut.checkOSSystem(sys.argv[2])
-        print(usersPathForMsg)
+        usersPathForMsg = ut.checkOSSystem(sys.argv[2])        
         decideActiveProjectBasedOnTable(sys.argv[1], False, usersPathForMsg)
     # 4) tableName pathForDb update
     elif len(sys.argv) == 4 and sys.argv[3] == 'update':
-        print("4")
+        print(ut.checkOSSystem(sys.argv[2]))
         if ut.checkIfFileExists(ut.checkOSSystem(sys.argv[2])):
             usersPathForDB = ut.checkOSSystem(sys.argv[2])
         decideActiveProjectBasedOnTable(sys.argv[1], True, pathForDB=usersPathForDB)
