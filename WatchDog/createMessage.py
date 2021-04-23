@@ -1,5 +1,4 @@
-from os import path
-import sqlite3, sys
+import sys
 import SqliteQueryTools as sqlT
 import watchDogUtilities as ut
 import CustomeModels as cModels

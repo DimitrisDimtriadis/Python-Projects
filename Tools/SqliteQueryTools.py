@@ -1,4 +1,5 @@
 # SqliteQueryTools version 1.0
+
 import sqlite3, sys
 from sqlite3 import Error
 import OSUtilities as ut

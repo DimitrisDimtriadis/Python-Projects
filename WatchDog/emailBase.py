@@ -20,6 +20,7 @@ def deleteRows(pandasReadFile, rowsToDelete, mFilePath):
 def insertEntry(mEmail, mPass, mSource, mHost, mFilePath):
     # Function to write entry on csv file
     mEntry = pandas.DataFrame([[mEmail, mPass, mSource, mHost]],
+    
                               columns=rowHeaders)
     mEntry.to_csv(mFilePath, mode='a', header=False, index=False)
 

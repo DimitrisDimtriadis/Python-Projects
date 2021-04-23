@@ -1,9 +1,11 @@
+# watchDogUtilities Version 1.0
+
 import os, sys, re
 
 # If os.name == nt then the script runs on windows
 def checkOSSystem(mPath):
-    if os.name == "nt" and False:                
-        return mPath
+    if os.name == "nt":                
+        return re.sub(r"/", "\\\\", mPath)
     else:        
         newPath = re.sub(r"\\", "/", mPath)
         return newPath
