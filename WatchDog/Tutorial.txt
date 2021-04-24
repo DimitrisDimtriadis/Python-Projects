@@ -12,6 +12,7 @@ The app works with python3. If you use python and not the python3, you will face
 @To add on infinite loop to execute every X mins we use linux's 'crontab -e' more specific we add the 
 line bellow: (Before you enter script to crontab make sure that you have set data.csv)
 * * * * * /path to file/shellScriptAggregator.sh
+* * * * * /path to file/BackupProcess.sh
 
 
 	

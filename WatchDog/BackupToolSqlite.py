@@ -7,31 +7,37 @@ backupDir = "BackupDB"
 
 # Main function of the script to back the sqlite3 db
 def main(pathForDB, filesLimitationPerDir=50):
-    # If doesn't exist create the main folder where will save the back up files
-    checkExistanceOrCreateDir(ut.findParentPath(backupDir))
     # Get the name of db to use it on next function
     dbName = extractNameFromPath(pathForDB)
-    # If doesn't exist the folder where will save the db backup. Create it
-    folderPathForProject = ut.checkOSSystem(ut.findParentPath(backupDir)+"\\" +dbName)
-    checkExistanceOrCreateDir(folderPathForProject)
-    checkIfExceedBackupLimitation(folderPathForProject, filesLimitationPerDir, dbName)
-    createBackUpFile(pathForDB, folderPathForProject)
+    dbLocatedPath = extractNameFromPath(pathForDB, needWholePath=True)
+    dbBackupPath = ut.checkOSSystem(dbLocatedPath + "\\" + backupDir)    
+    # If doesn't exist create the main folder where will save the back up files
+    checkExistanceOrCreateDir(dbBackupPath)
+    checkIfExceedBackupLimitation(dbBackupPath, filesLimitationPerDir, dbName)
+    createBackUpFile(pathForDB, dbBackupPath)
     print("Backup for " + dbName + " finished")
 
 # Function that extract the name of base
-def extractNameFromPath(mPath, needExtension=False):
+def extractNameFromPath(mPath, needExtension=False, needWholePath=False):
     # If it is Windows    
     if os.name == "nt":
         tempStringList = mPath.split("\\")
     # If it is Unix
     else:
         tempStringList = mPath.split("/")
-    nameOfDB = tempStringList[-1]
-    # Check if need to return name with extension or not
-    if not needExtension:
-        # Cut the extension
-        nameOfDB = nameOfDB.split('.')[0]
-    return nameOfDB
+
+    if needWholePath:
+        # To seperate the string we need to now the number of substrings    
+        sizeOfSubStrings = len(tempStringList)
+        pathDBLocated = "\\".join(tempStringList[0:sizeOfSubStrings-1])        
+        return ut.checkOSSystem(pathDBLocated)
+    else:
+        nameOfDB = tempStringList[-1]
+        # Check if need to return name with extension or not
+        if not needExtension:
+            # Cut the extension
+            nameOfDB = nameOfDB.split('.')[0]
+        return nameOfDB
 
 # Function that checks if dir (from path) exist in project and if it doesn't, It create it
 def checkExistanceOrCreateDir(dirPath):
@@ -111,8 +117,11 @@ if __name__ == "__main__":
     # arg[1] = Path for DB
     if numOfArg == 2:
         # Call the main function wit
-        # h checking if db exist (simultaneously)xaxax
-        main(ut.checkIfFileExists(ut.checkOSSystem(sys.argv[1])))
+        # Checking if db exist (simultaneously)
+        if ut.checkIfFileExists(ut.checkIfFileExists(sys.argv[1])):
+            main(ut.checkOSSystem(sys.argv[1]))
+        else:
+            raise Exception("File of given db doesn't exist !")
     # arg[1] = Path for DB, arg[2] = Limit of files per directory
     elif numOfArg == 3:
         # Call the main function with checking if db exist (simultaneously)        

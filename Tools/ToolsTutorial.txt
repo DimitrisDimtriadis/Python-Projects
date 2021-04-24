@@ -49,8 +49,8 @@ It takes the path and extract the name of file from path. It checks if directori
 remove the oldest if exceed that limit. After that it copies the db in that directory with the name "'current Timestamp'_'name of db'"
 
 - (argument_1='Path of .sqlite or .db file you want to backup' && argument_2='Limit of files each directory can contains')
-It takes the path and extract the name of file from path. It checks if directories exists (if doesn't exist it create a new one). If directory already exist, it check if it contains more than 'Given number' files in there and 
-remove the oldest if exceed that limit. After that it copies the db in that directory with the name "'current Timestamp'_'name of db'"
+It takes the path and extract the name of file from path. It checks if directories exists (if doesn't exist it create a new one). If directory already exist, it check if it contains more than 'Given number' files in 
+there and remove the oldest if exceed that limit. After that it copies the db in that directory with the name "'current Timestamp'_'name of db'"
 
 
 	
@@ -58,3 +58,9 @@ remove the oldest if exceed that limit. After that it copies the db in that dire
 _________________________________
 
 This script calls the BackupToolSqlite.py and if exit without status 0, then send email to user with simple error message
+
+
+- (argument_1='Path of .sqlite or .db file you want to backup')
+- (argument_1='Path of .sqlite or .db file you want to backup' && argument_2='Limit of files each directory can contains')
+- (argument_1='Path of .sqlite or .db file you want to backup' && argument_2='Path for data.csv which contains the source email to send to user')
+- (argument_1='Path of .sqlite or .db file you want to backup' && argument_2='Path for data.csv which contains the source email to send to user' && argument_3='Limit of files each directory can contains')
