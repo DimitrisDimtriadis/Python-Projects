@@ -1,6 +1,6 @@
 # BackupToolSqlite version 1.0
 
-import watchDogUtilities as ut
+import OSUtilities as ut
 import sys, os, time, sqlite3, re
 
 backupDir = "BackupDB"
@@ -12,7 +12,7 @@ def main(pathForDB, filesLimitationPerDir=50):
     # Get the name of db to use it on next function
     dbName = extractNameFromPath(pathForDB)
     # If doesn't exist the folder where will save the db backup. Create it
-    folderPathForProject = ut.checkOSSystem(ut.findParentPath(backupDir)+"\\" +dbName)
+    folderPathForProject = ut.regulatePathToSupportOS(ut.findParentPath(backupDir)+"\\" +dbName)
     checkExistanceOrCreateDir(folderPathForProject)
     checkIfExceedBackupLimitation(folderPathForProject, filesLimitationPerDir, dbName)
     createBackUpFile(pathForDB, folderPathForProject)
@@ -54,7 +54,7 @@ def createBackUpFile(pathForDB, pathForProjectBackUp):
     # Get the name from path
     nameOfBackupFile = createFileName(extractNameFromPath(pathForDB, True))
     # Get the path for backups
-    customPathForBackupFile = ut.checkOSSystem(pathForProjectBackUp + '/' + nameOfBackupFile)
+    customPathForBackupFile = ut.regulatePathToSupportOS(pathForProjectBackUp + '/' + nameOfBackupFile)
     bck = sqlite3.connect(customPathForBackupFile)
     with bck:
         con.backup(bck, pages=1, progress=progress)
@@ -92,7 +92,7 @@ def checkIfExceedBackupLimitation(mPathForDir, limitNum, dbNameWithoutExtinction
 
 def deleteGivenFileNames(listWithFileNames, pathWhereFileLocated):
     for mFile in listWithFileNames:
-        tempFileName = ut.checkOSSystem(pathWhereFileLocated + "\\" + mFile)
+        tempFileName = ut.regulatePathToSupportOS(pathWhereFileLocated + "\\" + mFile)
         if os.path.exists(tempFileName):
             os.remove(tempFileName)
         else:
@@ -112,13 +112,13 @@ if __name__ == "__main__":
     if numOfArg == 2:
         # Call the main function wit
         # h checking if db exist (simultaneously)xaxax
-        main(ut.checkIfFileExists(ut.checkOSSystem(sys.argv[1])))
+        main(ut.checkIfFileExists(ut.regulatePathToSupportOS(sys.argv[1])))
     # arg[1] = Path for DB, arg[2] = Limit of files per directory
     elif numOfArg == 3:
         # Call the main function with checking if db exist (simultaneously)        
         try:
-            ut.checkIfFileExists(ut.checkOSSystem(sys.argv[1]))
-            main(ut.checkOSSystem(sys.argv[1]), filesLimitationPerDir=int(sys.argv[2]))
+            ut.checkIfFileExists(ut.regulatePathToSupportOS(sys.argv[1]))
+            main(ut.regulatePathToSupportOS(sys.argv[1]), filesLimitationPerDir=int(sys.argv[2]))
         except ValueError:        
             raise Exception("The second argument is Invalid ! : %s" %ValueError)
     else:

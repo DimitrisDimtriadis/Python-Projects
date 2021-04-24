@@ -7,3 +7,4 @@ env/
 *.sqlite
 WatchDog/DBUtil/watchDogDB.sqlite
 WatchDog/testScript.sh
+Tools/output.txt

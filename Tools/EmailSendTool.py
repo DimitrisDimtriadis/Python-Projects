@@ -242,4 +242,5 @@ if __name__ == "__main__":
     elif len(sys.argv) == 1:
         main()
     else:
+        print("The number of arguments are : " + str(len(sys.argv)))
         print("Something went wrong with arguments. You must add first the path for the file with emails (csv file) and then the path for message (txt file)")

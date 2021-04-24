@@ -7,8 +7,7 @@ def regulatePathToSupportOS(mPath):
     if os.name == "nt":                
         return re.sub(r"/", "\\\\", mPath)
     else:        
-        newPath = re.sub(r"\\", "/", mPath)
-        return newPath
+        return re.sub(r"\\", "/", mPath)
 
 def findParentPath(nameOfFile):
     # Check if returns nothing with sys.argv[0]. If its true then check the os to correct the path   
@@ -22,4 +21,4 @@ def checkIfFileExists(filePath):
     if os.path.isfile(filePath):
         return True
     else:
-        raise Exception("Given path of file doesn't exist. Please correct the given path and try again !")
+        raise Exception("Given path ("+filePath+") of file doesn't exist. Please correct the given path and try again !")
