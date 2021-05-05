@@ -1,7 +1,7 @@
 # LogTool version 1.0
 
 from enum import Enum
-from datetime import date, datetime
+from datetime import datetime
 import os, re, sys
 
 # Path where the program will find or create the Developement/Production folder to save the loggers
@@ -80,7 +80,7 @@ def findNameOfFileToUpdateLog(folderPath):
         lastUpdatedFile = checkOSSystem(folderPath + '/' + sorted(listWithLogs, reverse=True)[0])
         # Get the size of last updated file
         sizeOfFile = os.path.getsize(lastUpdatedFile)
-        if maxSizeOfEachFile == -1 or maxSizeOfEachFile >= (sizeOfFile / 1000):
+        if maxSizeOfEachFile == -1 or maxSizeOfEachFile >= (sizeOfFile / 1000000):
             # returns the pathName of file we want to update
             return lastUpdatedFile
     except OSError:
@@ -108,7 +108,7 @@ def folderBasedOnProfile(givenProfile):
     return developFolderPath
 
 # The other files will call this function with specific arguments to update log file
-def Log(profileToImplement, statusOfLog, textToWrite, listWithDictForVariables=[]):
+def Log(profileToImplement, statusOfLog, textToWrite, DictionaryForVariables=[]):
     
     # Path of folder where we will place/edit log file
     folderPath = folderBasedOnProfile(profileToImplement)
@@ -120,8 +120,14 @@ def Log(profileToImplement, statusOfLog, textToWrite, listWithDictForVariables=[
     logToAppendInFile = '- ' + retrieveTimeStampInStringFormat() + statusOfLog.value + ": " + textToWrite     
     if not logFileToAddInfo:
         logFileToAddInfo = folderPath + '/' + str(round(datetime.now().timestamp() * 1000)) + '_log.txt'
+    
+    if len(DictionaryForVariables) != 0:
+        for mKey in DictionaryForVariables.keys():
+            logToAppendInFile += '\n\t ' + str(mKey) + ' = ' + str(DictionaryForVariables[mKey])
     writeTextOnFirstLine(checkOSSystem(logFileToAddInfo), logToAppendInFile)
 
 if __name__ == "__main__":
     Log(LogProfile.P, LogStatus.I, "Something went wrong here")
+    mDict = {"varA":1, "varB":2, "varC":3, "varD":4}
+    Log(LogProfile.P, LogStatus.E, "The variables is :", mDict)
     # findNameOfFileToUpdateLog('D:\sTree\WatchDog\Logs\Development')
