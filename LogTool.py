@@ -104,6 +104,8 @@ def folderBasedOnProfile(givenProfile):
         productFolderPath = checkOSSystem(pathOfLogsFolder+'/'+LogProfile.P.value)
         createFolder(productFolderPath)
         return productFolderPath
+    elif givenProfile == LogProfile.D and activeProfile == LogProfile.P:        
+        return
     
     return developFolderPath
 
@@ -112,6 +114,11 @@ def Log(profileToImplement, statusOfLog, textToWrite, DictionaryForVariables=[])
     
     # Path of folder where we will place/edit log file
     folderPath = folderBasedOnProfile(profileToImplement)
+
+    # if folderBasedOnProfile is None then exit the procedure
+    if not folderPath:
+        # Do not log anything
+        return
 
     # Check if we need to create new log file or to append on a existing one
     logFileToAddInfo = findNameOfFileToUpdateLog(folderPath)

@@ -108,7 +108,7 @@ It contains a full remote control to manual manipulate a specific database. Just
 
 
 
-	OSUtilities.py
+	WatchDogUtilities.py
 _________________________________
 
 Common function we need in other files. Basically it contains functions for path of files
