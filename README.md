@@ -137,8 +137,9 @@ This script calls the BackupToolSqlite.py and if exit without status 0, then sen
 - (argument_1='Path of .sqlite or .db file you want to backup' && argument_2='Limit of files each directory can contains')
 - (argument_1='Path of .sqlite or .db file you want to backup' && argument_2='Path for data.csv which contains the source email to send to user')
 - (argument_1='Path of .sqlite or .db file you want to backup' && argument_2='Path for data.csv which contains the source email to send to user' && argument_3='Limit of files each directory can contains')
+For backup process only.
 
-
+		
 	LogTool.py
 _________________________________
 
