@@ -1,5 +1,5 @@
 _________________________________
-^^^Info about WatchDog project^^^
+***Info about WatchDog project
 _________________________________
 
 !!! To start on this project you need to install all necessary tools like python3, sqlite3, pip etc. To do that you need to go on folder and run the command bellow:
@@ -15,7 +15,7 @@ line bellow: (Before you enter script to crontab make sure that you have set dat
 * * * * * /path to file/BackupProcess.sh
 
 	
-	&& Python Files &&
+	Python Files
 _________________________________
 
 --movieWatchDog.py
@@ -36,7 +36,7 @@ The script works only with this arguments:
     - 'tableName' 'pathForMessage' 'pathForDb' update
 
 
-	&& Bash Shell Scripts &&	
+	Bash Shell Scripts
 _________________________________
 
 --shellScriptAggregator.sh
@@ -49,7 +49,7 @@ It init the tables we need in db from .sql files in sqlCommands
 It has been created to run only one time, to init and install any necessary tool that project needs
 
 
-	&& Directories &&
+	Directories
 _________________________________
 
 --flatFilesUtil
@@ -62,7 +62,7 @@ All about SQLite3 (files and folders)
 The folder with all the .sql command (in file). Basically its the 'create table' and stuff like that
 
 
-	&& Other files &&
+	Other files
 _________________________________
 
 --data.csv
@@ -75,7 +75,7 @@ The message that the emailBase.py will send through an email
 The Base of whole project
 
 
-	&& emailBase.py &&
+	emailBase.py
 _________________________________
 
 --emailBase.py
@@ -94,7 +94,7 @@ It works same with previous one, but it doesn't asks from user to write anything
 Before do anything script check that paths for files are valid. If they don't an exception will raise
 
 
-	&& SqliteQueryTools.py &&
+	SqliteQueryTools.py
 _________________________________
 
 It's a python file that contains all functions needed to manipulate SQLite database.
@@ -108,14 +108,14 @@ It contains a full remote control to manual manipulate a specific database. Just
 
 
 
-	&& OSUtilities.py &&
+	OSUtilities.py
 _________________________________
 
 Common function we need in other files. Basically it contains functions for path of files
 ! The functions help on issues like validate path or file existance. Just support other classes !
 
 
-	&& BackupToolSqlite.py &&
+	BackupToolSqlite.py
 _________________________________
 
 Its a script that create the necessary directories per project/database and create a copy of db whenever you call it.
@@ -129,7 +129,7 @@ It takes the path and extract the name of file from path. It checks if directori
 there and remove the oldest if exceed that limit. After that it copies the db in that directory with the name "'current Timestamp'_'name of db'"
 
 	
-	&& BackupProcedure.sh &&
+	BackupProcedure.sh
 _________________________________
 
 This script calls the BackupToolSqlite.py and if exit without status 0, then send email to user with simple error message
@@ -139,24 +139,29 @@ This script calls the BackupToolSqlite.py and if exit without status 0, then sen
 - (argument_1='Path of .sqlite or .db file you want to backup' && argument_2='Path for data.csv which contains the source email to send to user' && argument_3='Limit of files each directory can contains')
 
 
-	&& LogTool.py &&
+	LogTool.py
 _________________________________
 
 The python file that needs to support the custom Logger on any python program. To use it on any other file you just need to import the file on project and just write 
 Base on profile and status, code decide to create and append logs.
 Inside the code, we have the 'maxSizeOfEachFile' where the value sets the limit on Maximum size of log file (if this var is equal to -1 then there is no limit)
 Also, we have the 'pathForFolderWithLoggers' where the value sets a diffrent path (than default) to save the folder with logs
-- Log(LogProfile, LogStatus, Text, Dictionary)
+* Log(LogProfile, LogStatus, Text, Dictionary)
 
 -- LogProfile
+    
     LogProfile.D = For DEVELOPMENT profile
     LogProfile.P = For PRODUCTION profile
+    
 -- LogStatus
-    LogStatus.D = For DEBUG status
+    
+    LogStatus.D = For DEBUG status    
     LogStatus.I = For INFO status
     LogStatus.W = For WARNING status
     LogStatus.E = For ERROR status
+    
 -- Text: Just a simple text to append on log
+
 -- Dictionary: Dictionary where key is the name of variable and the value is the value of this variable 
 
 ex. Log(LogProfile.P, LogStatus.E, "The variables is :", {"varA":1, "varB":2, "varC":3, "varD":4})
