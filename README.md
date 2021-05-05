@@ -148,15 +148,15 @@ Inside the code, we have the 'maxSizeOfEachFile' where the value sets the limit 
 Also, we have the 'pathForFolderWithLoggers' where the value sets a diffrent path (than default) to save the folder with logs
 - Log(LogProfile, LogStatus, Text, Dictionary)
 
-% LogProfile
-    --LogProfile.D = For DEVELOPMENT profile
-    --LogProfile.P = For PRODUCTION profile
-% LogStatus
-    --LogStatus.D = For DEBUG status
-    --LogStatus.I = For INFO status
-    --LogStatus.W = For WARNING status
-    --LogStatus.E = For ERROR status
-% Text: Just a simple text to append on log
-% Dictionary: Dictionary where key is the name of variable and the value is the value of this variable 
+-- LogProfile
+    LogProfile.D = For DEVELOPMENT profile
+    LogProfile.P = For PRODUCTION profile
+-- LogStatus
+    LogStatus.D = For DEBUG status
+    LogStatus.I = For INFO status
+    LogStatus.W = For WARNING status
+    LogStatus.E = For ERROR status
+-- Text: Just a simple text to append on log
+-- Dictionary: Dictionary where key is the name of variable and the value is the value of this variable 
 
 ex. Log(LogProfile.P, LogStatus.E, "The variables is :", {"varA":1, "varB":2, "varC":3, "varD":4})
