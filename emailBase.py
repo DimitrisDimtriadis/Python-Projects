@@ -1,8 +1,10 @@
-# EmailSendTool version 1.0
+# EmailSendTool version 1.2
 import smtplib
 import pandas
 import os, re, sys
 import watchDogUtilities as ut
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 rowHeaders = ['Email', 'password', 'SourceMail', 'host']
 basePath = 'flatFilesUtil/data.csv'
@@ -125,8 +127,11 @@ def main(pathForEmailFile='', pathForMessageFile=''):
                 msgText += line
 
         # Compination of Title and message of email
-        message = 'Subject: {}\n\n{}'.format(emailSubject, msgText)
+        message = MIMEMultipart("alternative")
+        message["Subject"] = emailSubject
 
+        htmlTxt = MIMEText(msgText, "html")
+        message.attach(htmlTxt)
         # Start procedure of sending email
         try:
             server = smtplib.SMTP_SSL(host, port)        
@@ -145,7 +150,7 @@ def main(pathForEmailFile='', pathForMessageFile=''):
         
         # For multiple emails
         try: 
-            server.sendmail(emailSource, reciptentTosSendMsgs, message)
+            server.sendmail(emailSource, reciptentTosSendMsgs, message.as_string())
             server.quit()
             print("Ok. All email(s) has been send")
         except Exception:

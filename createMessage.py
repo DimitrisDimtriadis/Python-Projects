@@ -7,6 +7,11 @@ import CustomeModels as cModels
 nameOfEmailMessage = "flatFilesUtil/message.txt"
 dbPath = ut.findParentPath("DBUtil/watchDogDB.sqlite")
 
+mSubTitle = "Hey, see what's new today!"
+messageTemplate = '''<div id="image" style="display: inline-block; margin: 20px;"><img style="font-size: 14px; float: left; margin-right: 10px;" src="%s" width="60" />
+    <p style="float: left;">%s <br /><span style="font-size: 8px;">IMDB: </span>%s</p>
+    </div>'''
+
 def createMessageToSendWithEmail(mTableName, pathForMessageFile='', pathForDatabase=''):
     # Create the whole path for message.txt and watchDog.sqlite files
     if pathForMessageFile != '':
@@ -36,12 +41,15 @@ def createMessageToSendWithEmail(mTableName, pathForMessageFile='', pathForDatab
     else:
         msgFile.write("1 new movie ! \n")
 
+    msgFile.write("<html><body>")
+    msgFile.write(mSubTitle)
     for row in moviesList:
         # Create a Movie Model to manipulate easier the data
         tempMovieObj = cModels.Movie(row["ID"], row['Title'], row['Grade'], row['ImageUrl'], row['Notified'], row['EntryDate'], row['ModifyDate'])
         # Add on message.txt file a new line with info for this movie
-        msgFile.write("* Name: " + tempMovieObj.title + " || " + str(tempMovieObj.grade) + " \n " + tempMovieObj.imgURL + "\n\n" )
+        msgFile.write(messageTemplate % (tempMovieObj.imgURL, tempMovieObj.title, str(tempMovieObj.grade)))
     
+    msgFile.write("</html></body>")
     # Close db connection
     sqlT.dbCloseConnection(dbConnection)
 
