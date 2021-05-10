@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #The path where script exist
 parentFilePath=$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 #Name of files used to specify the path to run the commands
 nameOfWatchDog=$parentFilePath"/movieWatchDog.py"
 nameOfEmailBase=$parentFilePath"/emailBase.py"
@@ -55,33 +56,33 @@ echo "Procedure started..."
 checkAndCreateDirIfNeed $nameOfDirForSourceFiles
 checkAndCreateDirIfNeed $pathForSourceFilesMV
 
+
 #Run movieWatchDog
 runSpecificPyFile $nameOfWatchDog
 #Get status of previous execution
 watchDogStatus=$?
 
 #If the watchDogStatus exit with 0 then execute the bellow code
-if [ $watchDogStatus == '0' ]
+if [ $watchDogStatus = 0 ]
 then
 	#Run createMessage
 	runSpecificPyFile $nameOfCreateMessage MoviesTb $pathForMessageMv
 	#Get status of previous execution
-	
 	createMessageStatus=$?
 
-	if [ $createMessageStatus == '0' ]
+	if [ $createMessageStatus = 0 ]
 	then
 		#Run emailBase
 		runSpecificPyFile $nameOfEmailBase $pathForEmailAddrMv $pathForMessageMv
 		#Get status of previous execution
 		emailBaseStatus=$?
 		
-		if [ $emailBaseStatus == '0' ]
-		then			
+		if [ $emailBaseStatus = 0 ]
+		then
 			runSpecificPyFile $nameOfCreateMessage MoviesTb $pathForDBMv update
 		fi
 
-	elif [ $createMessageStatus == '33' ]
+	elif [ $createMessageStatus = 33 ]
 	then
 		echo "Procedure ends successfully. There is nothing new to send !"
 	else
