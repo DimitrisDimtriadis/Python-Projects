@@ -56,7 +56,6 @@ echo "Procedure started..."
 checkAndCreateDirIfNeed $nameOfDirForSourceFiles
 checkAndCreateDirIfNeed $pathForSourceFilesMV
 
-
 #Run movieWatchDog
 runSpecificPyFile $nameOfWatchDog
 #Get status of previous execution

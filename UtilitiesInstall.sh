@@ -36,6 +36,7 @@ echo "Checking about pip..."
 installSpecificTool python3-pip pip3
 
 parentFilePath=$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 # Initialize the DataBase with MoviesTb (table)
 cd $parentFilePath; chmod 755 shellScriptAggregator.sh
 cd DBUtil; chmod 755 storageConfigure.sh; sh ./storageConfigure.sh
