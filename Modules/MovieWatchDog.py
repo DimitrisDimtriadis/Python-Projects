@@ -1,7 +1,8 @@
-import watchDogUtilities as ut
+import Utilities as ut
 import SqliteQueryTools as sqlT
 from bs4 import BeautifulSoup as BF
 import re, requests, datetime
+import LogTool as log
 
 # Paths for files that script needs
 dbFile = "DBUtil/watchDogDB.sqlite"

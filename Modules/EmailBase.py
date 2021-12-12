@@ -4,6 +4,7 @@ import pandas
 import os, re
 import AppSettings as aps
 import Utilities as ut
+import LogTool as log
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from pathlib import Path
@@ -34,7 +35,6 @@ def createMessageFile(mFilePath):
         createFolders(mFilePath)
         # Just create the file
         os.mknod(mFilePath)
-
 
 # Function to check if file exist and return the path of txt file with message for sending via email
 def checkIfMessageToSendExist(msgFilePath):
@@ -122,23 +122,30 @@ def main():
             try:
                 server.login(emailSource, passwordSource)
             except Exception:
+                log.Logger(log.LogProfile.P, log.LogStatus.E, "Something went wrong with given crendetials !")
                 print("\nSomething went wrong with given crendetials !\n")
                 if server:
                     server.quit()
                     
         except smtplib.socket.gaierror:            
+            log.Logger(log.LogProfile.P, log.LogStatus.E, "Something went wrong with SMTP_SSL (host or port) !")
             print("\nSomething went wrong with SMTP_SSL (host or port) !\n")            
         
         # For multiple emails
         try: 
             server.sendmail(emailSource, reciptentTosSendMsgs, message.as_string())
             server.quit()
+            log.Logger(log.LogProfile.D, log.LogStatus.I, "Ok. All email(s) has been send")
             print("Ok. All email(s) has been send")
         except Exception:
-            print("\nScript fail to send the message !\n")
+            errorFailToSendMessage = "Script fail to send the message !"
+            log.Logger(log.LogProfile.P, log.LogStatus.E, errorFailToSendMessage)
+            print("\n" + errorFailToSendMessage + "\n")
         
     else:
-        print("\nIt seems that there is no message.txt file in current path. \nAs result the email script abort the try of sending any message!!\n\n")
+        errorNoMessageFile = "It seems that there is no message.txt file in current path. \nAs result the email script abort the try of sending any message!!"
+        log.Logger(log.LogProfile.P, log.LogStatus.E, errorNoMessageFile)
+        print("\n" + errorNoMessageFile + "\n\n")
         # If procudes stopped because of missing message file. Just create it
         createMessageFile(ut.findParentPath(appsettings.EMAIL_MESSAGE_PATH))
         raise Exception("Message file missing !")

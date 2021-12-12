@@ -8,3 +8,4 @@ env/
 WatchDog/DBUtil/watchDogDB.sqlite
 WatchDog/testScript.sh
 Tools/output.txt
+Logs/
