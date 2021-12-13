@@ -1,6 +1,5 @@
 # BackupToolSqlite version 1.0
-
-import watchDogUtilities as ut
+import Utilities as ut
 import sys, os, time, sqlite3, re
 
 backupDir = "BackupDB"
