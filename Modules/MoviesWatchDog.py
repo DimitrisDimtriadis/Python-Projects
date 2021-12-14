@@ -18,7 +18,7 @@ def extractImdbGradeFromText(mText):
 def createInfoMsgToSend(elementList):
 
     # Open connection with SQLite DB to interact with it
-    dbConnection = sqlT.dbOpenConnection(ut.checkOSSystem(ut.findParentPath(appsettings.DB_FILE_PATH)))
+    dbConnection = sqlT.dbOpenConnection(ut.checkOSSystem(appsettings.DB_FILE_PATH))
 
     if dbConnection == None:
         sqlT.dbCreateDatabase()

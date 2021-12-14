@@ -5,10 +5,11 @@ import os, re, time
 from AppSettings import appsettings
 from inspect import getframeinfo, stack
 from pathlib import Path
+import Utilities as ut
 
 # Path where the program will find or create the Developement/Production folder to save the loggers
 # If variable is equal to "" then use the current folder
-pathForFolderWithLoggers = appsettings.LOGGER_FILES_PATH
+pathForFolderWithLoggers = ut.checkOSSystem(appsettings.LOGGER_FILES_PATH)
 # Maximum size of each file to avoid the big files !!! In MegaBytes (MB) !!!
 # If it is equal to -1 then, there is no limitation on each file
 maxSizeOfEachFile = float(appsettings.LOGGER_FILE_MAX_SIZE)

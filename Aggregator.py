@@ -1,5 +1,6 @@
 import sys
-sys.path.insert(0, 'E:\\SourceTree\\WatchDog\\Modules')
+from Modules.AppSettings import appsettings
+sys.path.insert(0, appsettings.APP_MODULES_PATH)
 
 import Modules.MoviesWatchDog as mWd
 import Modules.CreateMessage as cMsg

@@ -39,7 +39,7 @@ def createMessageFile(mFilePath):
 # Function to check if file exist and return the path of txt file with message for sending via email
 def checkIfMessageToSendExist(msgFilePath):
     # Check if file exist on current path and it is not empty
-    textMessagePath  = ut.findParentPath(msgFilePath)
+    textMessagePath  = msgFilePath
     if os.path.isfile(textMessagePath):
         if os.stat(textMessagePath).st_size != 0:
             # Return the path
@@ -56,7 +56,7 @@ def main():
     appsettings = aps.appsettings()
     
     # Set var for base path to check it later
-    emailsBasePath = ut.findParentPath(appsettings.EMAIL_FILE_PATH)
+    emailsBasePath = ut.checkOSSystem(appsettings.EMAIL_FILE_PATH)
     # Function to check if file exist
     createFileForEmails(emailsBasePath)
     # Read csv file
@@ -99,7 +99,7 @@ def main():
             reciptentTosSendMsgs.append(receiverMail)
 
     # Save path of message.txt (if exist) to set the title and the message of email
-    pathOfMessageFile = checkIfMessageToSendExist(appsettings.EMAIL_MESSAGE_PATH)
+    pathOfMessageFile = checkIfMessageToSendExist(ut.checkOSSystem(appsettings.EMAIL_MESSAGE_PATH))
 
     if pathOfMessageFile != "" and pathOfMessageFile != "-1":
 
@@ -150,7 +150,7 @@ def main():
         log.Logger(log.LogProfile.P, log.LogStatus.E, errorNoMessageFile)
         print("\n" + errorNoMessageFile + "\n\n")
         # If procudes stopped because of missing message file. Just create it
-        createMessageFile(ut.findParentPath(appsettings.EMAIL_MESSAGE_PATH))
+        createMessageFile(ut.checkOSSystem(appsettings.EMAIL_MESSAGE_PATH))
         raise Exception("Message file missing !")
 
     else:

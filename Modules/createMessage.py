@@ -7,9 +7,9 @@ from AppSettings import appsettings
 
 def createTxtMessage():
     # Create the whole path for message.txt and watchDog.sqlite files
-    messagePath = ut.findParentPath(appsettings.EMAIL_MESSAGE_PATH)    
+    messagePath = ut.checkOSSystem(appsettings.EMAIL_MESSAGE_PATH)
     # Full path for the DB
-    dbPath = ut.findParentPath(appsettings.DB_FILE_PATH)
+    dbPath = ut.checkOSSystem(appsettings.DB_FILE_PATH)
     # Create db Connection
     dbConnection = sqlT.dbOpenConnection(dbPath)
     # Fetch all wanted data from base
@@ -41,7 +41,7 @@ def createTxtMessage():
 # When append all movies to message.txt then we need to mark them as readed
 def updateDataInDB():
     # Full path for the DB
-    dbPath = ut.findParentPath(appsettings.DB_FILE_PATH)
+    dbPath = ut.checkOSSystem(appsettings.DB_FILE_PATH)
     # Create db Connection
     dbConnection = sqlT.dbOpenConnection(dbPath)    
     # Mark entries ass seen
@@ -51,7 +51,7 @@ def updateDataInDB():
 
 def cleanTxtMessage():
     # Create the whole path for message.txt and watchDog.sqlite files
-    messagePath = ut.findParentPath(appsettings.EMAIL_MESSAGE_PATH)
+    messagePath = ut.checkOSSystem(appsettings.EMAIL_MESSAGE_PATH)
     # It open it on 'w' mode and close it to erase it
     open(messagePath, "w").close()
 

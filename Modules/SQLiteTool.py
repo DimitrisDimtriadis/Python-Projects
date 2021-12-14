@@ -90,7 +90,7 @@ def dbGetTableOfDB(mConnection):
 def dbCreateDatabase():    
     conn = None
     try:
-        conn = sqlite3.connect(ut.checkOSSystem(ut.findParentPath(appsettings.DB_FILE_PATH)))
+        conn = sqlite3.connect(ut.checkOSSystem(appsettings.DB_FILE_PATH))
         print(sqlite3.version)
     except Error as e:
         print(e)
