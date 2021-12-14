@@ -40,12 +40,15 @@ def createMessageFile(mFilePath):
 def checkIfMessageToSendExist(msgFilePath):
     # Check if file exist on current path and it is not empty
     textMessagePath  = ut.findParentPath(msgFilePath)
-    if os.path.isfile(textMessagePath) and os.stat(textMessagePath).st_size != 0:
-        # print("The path for message.txt is: " + textMessagePath)
-        return textMessagePath
-    else:
-        print("Something went wrong with message.txt")
+    if os.path.isfile(textMessagePath):
+        if os.stat(textMessagePath).st_size != 0:
+            # Return the path
+            return textMessagePath
         return ""
+    else:
+        log.Logger(log.LogProfile.P, log.LogStatus.E, "File message.txt not exist")
+        print("File message.txt not exist")
+        return "-1"
 
 # main function that does all the email things
 def main():
@@ -98,7 +101,7 @@ def main():
     # Save path of message.txt (if exist) to set the title and the message of email
     pathOfMessageFile = checkIfMessageToSendExist(appsettings.EMAIL_MESSAGE_PATH)
 
-    if pathOfMessageFile != "":
+    if pathOfMessageFile != "" and pathOfMessageFile != "-1":
 
         # Open the file with message
         messageFile = open(pathOfMessageFile)
@@ -142,13 +145,19 @@ def main():
             log.Logger(log.LogProfile.P, log.LogStatus.E, errorFailToSendMessage)
             print("\n" + errorFailToSendMessage + "\n")
         
-    else:
+    elif pathOfMessageFile == "-1":
         errorNoMessageFile = "It seems that there is no message.txt file in current path. \nAs result the email script abort the try of sending any message!!"
         log.Logger(log.LogProfile.P, log.LogStatus.E, errorNoMessageFile)
         print("\n" + errorNoMessageFile + "\n\n")
         # If procudes stopped because of missing message file. Just create it
         createMessageFile(ut.findParentPath(appsettings.EMAIL_MESSAGE_PATH))
         raise Exception("Message file missing !")
+
+    else:
+        messageForLogger = "The message you try to send is empty !"
+        log.Logger(log.LogProfile.D, log.LogStatus.I, messageForLogger)
+        print("\n" + messageForLogger + "\n\n")        
+        
 
 # main procedure of script
 if __name__ == "__main__":

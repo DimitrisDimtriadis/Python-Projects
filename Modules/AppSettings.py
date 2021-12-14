@@ -6,8 +6,8 @@ class LogProfiles(Enum):
 
 class appsettings:
     # EMAIL CONFIG
-    EMAIL_FILE_PATH = "Modules/rawFiles/data.csv"
-    EMAIL_MESSAGE_PATH = "Modules/rawFiles/message.txt"
+    EMAIL_FILE_PATH = "rawFiles/data.csv"
+    EMAIL_MESSAGE_PATH = "rawFiles/message.txt"
     
     # LOGGER CONFIG
     LOGGER_ACTIVE_PROFILE=LogProfiles.D
@@ -21,7 +21,7 @@ class appsettings:
     </div>'''
 
     # DATABASE CONFIG
-    DB_FILE_PATH="Modules/rawFiles/watchDogDB.sqlite"
+    DB_FILE_PATH="rawFiles/watchDogDB.sqlite"
 
     # WATCHDOG CONFIG
     APP_MOVIES_URL='https://www.subs4free.club/'

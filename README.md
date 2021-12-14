@@ -17,10 +17,6 @@ line bellow: (Before you enter script to crontab make sure that you have set dat
 _________________________________
 <h3><b>Bash Shell Scripts</h3></b>
 
-<h4><i> * shellScriptAggregator.sh</h4></i>
-It the bash script that execute every py script we want on right order. If something go wrong, it notify the user with error message
-<br><br><br>
-
 <h4><i> * UtilitiesInstall.sh</h4></i>
 It has been created to run only one time, to init and install any necessary tool that project needs
 <br><br><br>

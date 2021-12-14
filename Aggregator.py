@@ -9,6 +9,10 @@ if __name__ == "__main__":
     # Download the data and place them to DB
     mWd.main()
     # Create the message based on last data
-    cMsg.main()
+    cMsg.createTxtMessage()
     # Send the data to recipients
     eT.main()
+    # Mark data as seen
+    cMsg.updateDataInDB()
+    # Clean message txt
+    cMsg.cleanTxtMessage()

@@ -12,7 +12,11 @@ def checkOSSystem(mPath):
 # Check if returns nothing with sys.argv[0]. If its true then check the os to correct the path   
 def findParentPath(nameOfFile):
     if os.path.dirname(sys.argv[0]) != "":
-        return checkOSSystem(os.path.dirname(sys.argv[0]) + "\\" + nameOfFile)    
+        # We add this append only because... when we run as script and not as app then the parent path includes the 'Module' folder. When you run it as app then it doesn't see the folder 'Modules' in parent path
+        partsOfPath = os.path.dirname(sys.argv[0]).split(checkOSSystem('/'))
+        if partsOfPath[-1] == 'Modules':
+            return checkOSSystem(os.path.dirname(sys.argv[0]) + "\\" + nameOfFile)
+        return checkOSSystem(os.path.dirname(sys.argv[0]) + "\\Modules\\" + nameOfFile)
     else:   
         return checkOSSystem(nameOfFile)
 
