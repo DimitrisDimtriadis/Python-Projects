@@ -6,16 +6,20 @@ class LogProfiles(Enum):
 
 class appsettings:
     # WATCHDOG CONFIG
-    APP_MODULES_PATH = 'E:\\SourceTree\\WatchDog\\Modules'
+    # APP_MODULES_PATH = 'E:\\SourceTree\\WatchDog\\Modules'
+    APP_MODULES_PATH = '/home/pi/WatchDog/Modules'
     APP_MOVIES_URL = 'https://www.subs4free.club/'
     APP_MOVIES_TABLE = 'MoviesTb'
 
     # EMAIL CONFIG
+    # EMAIL_FILE_PATH = APP_MODULES_PATH + "\\rawFiles\\data.csv"
     EMAIL_FILE_PATH = APP_MODULES_PATH + "/rawFiles/data.csv"
-    EMAIL_MESSAGE_PATH = APP_MODULES_PATH + "/rawFiles/message.txt"
+    # EMAIL_MESSAGE_PATH = APP_MODULES_PATH + "\\rawFiles\\message.txt"
+    EMAIL_MESSAGE_PATH = APP_MODULES_PATH + "/rawFiles/message.txt" 
     
     # LOGGER CONFIG
     LOGGER_ACTIVE_PROFILE = LogProfiles.D
+    # LOGGER_FILES_PATH = APP_MODULES_PATH + "\\rawFiles"
     LOGGER_FILES_PATH = APP_MODULES_PATH + "/rawFiles"
     LOGGER_FILE_MAX_SIZE = -1
 

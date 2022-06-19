@@ -35,6 +35,7 @@ def createTxtMessage():
         msgFile.write(appsettings.MSG_MAIN_BODY_TEMPLATE % (tempMovieObj.imgURL, tempMovieObj.title, str(tempMovieObj.grade)))
     
     msgFile.write("</html></body>")
+    msgFile.close()
     # Close db connection
     sqlT.dbCloseConnection(dbConnection)
 

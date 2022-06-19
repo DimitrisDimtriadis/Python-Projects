@@ -74,7 +74,7 @@ def main():
     # Message to send on email
     msgText = ""
     # Set port and email source and email host # For SSL
-    port = 465
+    port = 587
 
     # Check if source mail has beeen set
     # SourceMail = 1 mean that its not for sending but as source
@@ -120,9 +120,10 @@ def main():
         message.attach(htmlTxt)
         # Start procedure of sending email
         try:
-            server = smtplib.SMTP_SSL(host, port)        
+            server = smtplib.SMTP(host, port)        
             # Try to login on email witifh given crentetial3
             try:
+                server.starttls()
                 server.login(emailSource, passwordSource)
             except Exception:
                 log.Logger(log.LogProfile.P, log.LogStatus.E, "Something went wrong with given crendetials !")
