@@ -5,6 +5,7 @@ class LogProfiles(Enum):
     P = "Production"
 
 class appsettings:
+    
     # WATCHDOG CONFIG
     
     # For Windows
@@ -30,7 +31,6 @@ class appsettings:
     
     # About movies
     APP_MOVIES_URL = 'https://www.subs4free.club/'
-    APP_MOVIES_TABLE = 'MoviesTb'    
     
     # LOGGER CONFIG
     LOGGER_ACTIVE_PROFILE = LogProfiles.D
