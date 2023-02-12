@@ -44,13 +44,6 @@ _________________________________
 The message that the emailBase.py will send through an email
 <br><br><br>
 
-<h4><i> * watchDogDB.sqlite</h4></i>
-The Base of whole project
-<br><br><br>
-
-_________________________________
-<h3><b>Python Files</h3></b>
-
 <h4><i> * AppSetting.py</h4></i> 
 This files contains all the settings and parameters needs to run the process
 <br><br><br>
@@ -67,7 +60,6 @@ This file contains all the function needs to interact with the file where we sav
 Contain all the Classes that are the models to create objects whenever we need them to manipulate data easier
 <br><br><br>
 
-
 <h4><i> * createMessage.py</h4></i>
 This script BASED ON input argument either fetch all the data we want to send through an email, either mark all unread rows as sended to avoid sending any duplication of data. The project on which will make the changes
 depend on the arguments user will impliment.
@@ -79,7 +71,6 @@ The script works only with this arguments:
     - 'tableName' 'pathForMessage' 'pathForDb'
     - 'tableName' 'pathForMessage' 'pathForDb' update
 <br><br><br>
-
 
 <h4><i> * EmailTool.py</h4></i> 
 The main function for this tool is to sent emails with custom message. This script need path for data.csv (which contains all the recipients) from Appsettings to get the destinations of the email. Also we need the path of message.txt (which contain the content of the email) from AppSettings and containts all the information want to sent to user
