@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
 #To update the existand os
-sudo apt update
-sudo apt upgrade
 sudo apt-get update
+sudo apt-get upgrade
 
 # First argument used for installation and the second one to check the version
 installSpecificTool(){
@@ -26,22 +25,14 @@ installSpecificTool(){
     fi    
 }
 
-echo "Checking about SQLite..."
-installSpecificTool sqlite3 sqlite3
-
 echo "Checking about Python..."
 installSpecificTool python3.8 python3
 
 echo "Checking about pip..."
 installSpecificTool python3-pip pip3
 
-parentFilePath=$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
-# Initialize the DataBase with MoviesTb (table)
-cd $parentFilePath; chmod 755 shellScriptAggregator.sh
-cd DBUtil; chmod 755 storageConfigure.sh; sh ./storageConfigure.sh
+# parentFilePath=$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 sudo pip3 install pandas requests bs4 BeautifulSoup
 #Basic command to avoid issues with pandas/numpy lib
 sudo apt-get install python-dev libatlas-base-dev
-

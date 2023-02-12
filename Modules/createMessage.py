@@ -1,19 +1,14 @@
-import SQLiteTool as sqlT
 import Utilities as ut
 from AppSettings import appsettings
 import Models as cModels
 from AppSettings import appsettings
-
+import CsvTool as csvT
 
 def createTxtMessage():
     # Create the whole path for message.txt and watchDog.sqlite files
-    messagePath = ut.checkOSSystem(appsettings.EMAIL_MESSAGE_PATH)
-    # Full path for the DB
-    dbPath = ut.checkOSSystem(appsettings.DB_FILE_PATH)
-    # Create db Connection
-    dbConnection = sqlT.dbOpenConnection(dbPath)
+    messagePath = ut.checkOSSystem(appsettings.EMAIL_MESSAGE_PATH)    
     # Fetch all wanted data from base
-    moviesList = sqlT.dbSELECT(dbConnection, appsettings.APP_MOVIES_TABLE, whereStatementText="Notified = 1")    
+    moviesList = csvT.getUnsentMoview()
     
     # Create (If doesn't exist) message.txt or clean it to create a new message
     msgFile = open(messagePath, "w")
@@ -35,20 +30,12 @@ def createTxtMessage():
         msgFile.write(appsettings.MSG_MAIN_BODY_TEMPLATE % (tempMovieObj.imgURL, tempMovieObj.title, str(tempMovieObj.grade)))
     
     msgFile.write("</html></body>")
-    msgFile.close()
-    # Close db connection
-    sqlT.dbCloseConnection(dbConnection)
+    msgFile.close()    
 
 # When append all movies to message.txt then we need to mark them as readed
-def updateDataInDB():
-    # Full path for the DB
-    dbPath = ut.checkOSSystem(appsettings.DB_FILE_PATH)
-    # Create db Connection
-    dbConnection = sqlT.dbOpenConnection(dbPath)    
+def updateDataInDB():    
     # Mark entries ass seen
-    sqlT.dbUPDATE(dbConnection, appsettings.APP_MOVIES_TABLE, ['Notified'], [0], "Notified = 1")
-    #Close the connection
-    sqlT.dbCloseConnection(dbConnection)
+    csvT.markAllAsNotified()
 
 def cleanTxtMessage():
     # Create the whole path for message.txt and watchDog.sqlite files

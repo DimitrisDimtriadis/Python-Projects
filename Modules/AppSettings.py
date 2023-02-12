@@ -6,21 +6,34 @@ class LogProfiles(Enum):
 
 class appsettings:
     # WATCHDOG CONFIG
+    
+    # For Windows
     # APP_MODULES_PATH = 'E:\\SourceTree\\WatchDog\\Modules'
-    APP_MODULES_PATH = '/home/pi/WatchDog/Modules'
-    APP_MOVIES_URL = 'https://www.subs4free.club/'
-    APP_MOVIES_TABLE = 'MoviesTb'
-
-    # EMAIL CONFIG
-    # EMAIL_FILE_PATH = APP_MODULES_PATH + "\\rawFiles\\data.csv"
-    EMAIL_FILE_PATH = APP_MODULES_PATH + "/rawFiles/data.csv"
+    # EMAIL_FILE_PATH = APP_MODULES_PATH + "\\rawFiles\\emailConfig.csv"
     # EMAIL_MESSAGE_PATH = APP_MODULES_PATH + "\\rawFiles\\message.txt"
+    # LOGGER_FILES_PATH = APP_MODULES_PATH + "\\rawFiles"
+    # APP_MOVIES_CSV_PATH = APP_MODULES_PATH + '\\rawFiles\\movies.csv'
+    
+    # For Ubuntu
+    # APP_MODULES_PATH = '/home/pi/WatchDog/Modules'
+    # EMAIL_FILE_PATH = APP_MODULES_PATH + "/rawFiles/emailConfig.csv"
+    # EMAIL_MESSAGE_PATH = APP_MODULES_PATH + "/rawFiles/message.txt" 
+    # LOGGER_FILES_PATH = APP_MODULES_PATH + "/rawFiles"
+    # APP_MOVIES_CSV_PATH = APP_MODULES_PATH + '/rawFiles/movies.csv'
+
+    # For Test
+    APP_MODULES_PATH = '/Users/dimitriosdimitriadis/Fork/WatchDog/Modules'
+    EMAIL_FILE_PATH = APP_MODULES_PATH + "/rawFiles/emailConfig.csv"
     EMAIL_MESSAGE_PATH = APP_MODULES_PATH + "/rawFiles/message.txt" 
+    LOGGER_FILES_PATH = APP_MODULES_PATH + "/rawFiles"
+    APP_MOVIES_CSV_PATH = APP_MODULES_PATH + '/rawFiles/movies.csv'
+    
+    # About movies
+    APP_MOVIES_URL = 'https://www.subs4free.club/'
+    APP_MOVIES_TABLE = 'MoviesTb'    
     
     # LOGGER CONFIG
     LOGGER_ACTIVE_PROFILE = LogProfiles.D
-    # LOGGER_FILES_PATH = APP_MODULES_PATH + "\\rawFiles"
-    LOGGER_FILES_PATH = APP_MODULES_PATH + "/rawFiles"
     LOGGER_FILE_MAX_SIZE = -1
 
     # CREATE MSG CONFIG
@@ -28,6 +41,3 @@ class appsettings:
     MSG_MAIN_BODY_TEMPLATE = '''<div id="image" style="display:inline-block; margin:20px; width:100%%; "><img style="font-size: 14px; float: left; margin-right: 10px;" src="%s" width="60" />
     <p style="float: left;">%s <br /><span style="font-size: 8px;">IMDB: </span>%s</p>
     </div>'''
-
-    # DATABASE CONFIG
-    DB_FILE_PATH = APP_MODULES_PATH + "/rawFiles/watchDogDB.sqlite"

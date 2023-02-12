@@ -1,11 +1,11 @@
 import Utilities as ut
-import SQLiteTool as sqlT
 from bs4 import BeautifulSoup as BF
 import re, requests, datetime
 from AppSettings import appsettings
 import LogTool as log
 from AppSettings import LogProfiles
 from LogTool import LogStatus
+import CsvTool as csvT
 
 MoviesList = []
 
@@ -16,15 +16,6 @@ def extractImdbGradeFromText(mText):
     return -1
 
 def createInfoMsgToSend(elementList):
-
-    # Open connection with SQLite DB to interact with it
-    dbConnection = sqlT.dbOpenConnection(ut.checkOSSystem(appsettings.DB_FILE_PATH))
-
-    if dbConnection == None:
-        sqlT.dbCreateDatabase()
-
-    # Make sure that table exist
-    initTable(dbConnection)
 
     # Loop that add data on message.txt
     for anElementListM in elementList:
@@ -43,40 +34,20 @@ def createInfoMsgToSend(elementList):
         locationOfGrade = movieGradeAsHtml.lower().find("imdb")        
         gradeOfMovie =  extractImdbGradeFromText(movieGradeAsHtml)
         
-        # Search in base if movie alreay exist and return it
-        mRes = sqlT.dbSELECT(dbConnection, appsettings.APP_MOVIES_TABLE, whereStatementText= "Title = '"+nameOfMovieText + "'")       
+        # Search in base if movie alreay exist and return it        
+        existedRow = csvT.alreadyExist(nameOfMovieText)
         
-        if not mRes:
+        if existedRow == None:
             # If entry doesn't exist insert new row
-            sqlT.dbINSERT(dbConnection, appsettings.APP_MOVIES_TABLE, ['Title', 'Grade', 'Notified', 'ImageUrl', 'EntryDate'], [nameOfMovieText, gradeOfMovie, 1, imageOfMovie, datetime.datetime.now().timestamp()])       
-        elif len(mRes)==1:
+            movieDict = {'Title':nameOfMovieText, 'Grade':gradeOfMovie, 'Notified':1, 'EntryDate':datetime.datetime.now().timestamp(), 'ModifyDate':'', 'ImageUrl':imageOfMovie}
+            csvT.insertNewRow(movieDict)
+        else:
             # If entry does exist update the row
-            if locationOfGrade != -1 or gradeOfMovie != -1:
-                sqlT.dbUPDATE(dbConnection, appsettings.APP_MOVIES_TABLE, ['Grade', 'ImageUrl', 'ModifyDate'], [gradeOfMovie, imageOfMovie, datetime.datetime.now().timestamp()], "ID = " + str(mRes[0]['ID']))
+            if locationOfGrade != -1 or gradeOfMovie != -1:                
+                csvT.updateRow({'Grade': gradeOfMovie, 'ModifyDate': datetime.datetime.now().timestamp(), 'ImageUrl': imageOfMovie}, existedRow['ID'])
             else:
                 # If grade is not valid don't add it
-                sqlT.dbUPDATE(dbConnection, appsettings.APP_MOVIES_TABLE, ['ImageUrl', 'ModifyDate'], [imageOfMovie, datetime.datetime.now().timestamp()], "ID = " + str(mRes[0]['ID']))
-        
-    sqlT.dbCloseConnection(dbConnection)
-
-# Function that check if db containts table for Movies. If it hasn't then it create a new one
-def initTable(dbConnection):
-    tablesOfDB = sqlT.dbGetTableOfDB(dbConnection)
-    # If table exist continue with main procedure
-    if appsettings.APP_MOVIES_TABLE in tablesOfDB:
-        return
-    # Create a string that contaitns the SQL command to create a new table
-    sqlToCreateTable = '''CREATE TABLE IF NOT EXISTS ''' + appsettings.APP_MOVIES_TABLE + '''(
-	ID INTEGER PRIMARY KEY AUTOINCREMENT,
-	Title TEXT NOT NULL,
-	Grade REAL,
-	Notified INTEGER NOT NULL,
-	EntryDate INTEGER,
-	ModifyDate INTEGER,
-	ImageUrl TEXT
-);'''
-    # Execute command to create the
-    sqlT.dbCustomQuery(dbConnection, sqlToCreateTable)
+                csvT.updateRow({'ModifyDate': datetime.datetime.now().timestamp(), 'ImageUrl': imageOfMovie})                
 
 # main function
 def main():

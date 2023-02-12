@@ -8,12 +8,12 @@ import Modules.EmailTool as eT
 
 if __name__ == "__main__":
     # Download the data and place them to DB
-    mWd.main()
+    # mWd.main()
     # Create the message based on last data
-    cMsg.createTxtMessage()
+    # cMsg.createTxtMessage()
     # Send the data to recipients
     eT.main()
     # Mark data as seen
-    cMsg.updateDataInDB()
+    # cMsg.updateDataInDB()
     # Clean message txt
-    cMsg.cleanTxtMessage()
+    # cMsg.cleanTxtMessage()

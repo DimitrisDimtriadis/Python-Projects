@@ -1,5 +1,4 @@
 # Utilities Version 1.0
-
 import os, sys, re
 
 # If os.name == nt then the script runs on windows
